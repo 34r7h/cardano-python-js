@@ -1,0 +1,19 @@
+{
+  "name": "pycardanoapi",
+  "version": "1.0.0",
+  "description": "python js bridge for easier cardano api",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "cardano",
+    "js",
+    "python"
+  ],
+  "author": "34r7h",
+  "license": "ISC",
+  "dependencies": {
+    "python-shell": "^3.0.1"
+  }
+}
