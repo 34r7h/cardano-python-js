@@ -29,5 +29,13 @@ svk = StakeVerificationKey.from_signing_key(ssk)
 
 # Derive an address from payment verification key and stake verification key
 address = Address(pvk.hash(), svk.hash(), network)
+def sign(x): 
+    return 'sign ' + x
+def createtx(x): 
+    return 'createtx ' + x
+def mint(x): 
+    return 'mint ' + x
+def verify(x): 
+    return 'verify ' + x
 
-print(address)
+print(sign('1'), createtx('2'), mint('3'), verify('4'), address)

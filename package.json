@@ -4,7 +4,8 @@
   "description": "python js bridge for easier cardano api",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "serve": "nodemon ./index.js",
+    "test": "node ./test.js"
   },
   "keywords": [
     "cardano",

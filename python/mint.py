@@ -1,0 +1,1 @@
+print('i will mint based on tx lookup with meta, supply, and name ')
