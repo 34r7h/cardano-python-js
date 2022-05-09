@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
     let pyshell = new PythonShell('python/api.py');
     pyshell.send('getaddress')
     pyshell.on('message', (msg, err)=>{
-        console.log('hello rumit! incoming message from api.py', err, msg, typeof msg);
+        console.log('incoming message from api.py', err, msg, typeof msg);
         return res.send(msg)
     })
     return pyshell.end(function (err,code,signal) {
