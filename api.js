@@ -7,11 +7,68 @@ var cors = require('cors')
 var bodyParser = require('body-parser');
 const { exec } = require("child_process")
 let {PythonShell} = require('python-shell')
+const crypto = require("crypto-js");
+
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const port = 80
 const portssl = 443
+const format = {
+    stringify(cipherParams) {
+        // create json object with ciphertext
+        var jsonObj = { ct: cipherParams.ciphertext.toString(crypto.enc.Hex) };
+
+        // optionally add iv or salt
+        if (cipherParams.iv) {
+            jsonObj.iv = cipherParams.iv.toString();
+        }
+
+        if (cipherParams.salt) {
+            jsonObj.s = cipherParams.salt.toString();
+        }
+        // stringify json object
+        return jsonObj.ct + '_' + jsonObj.iv + '_' + jsonObj.s;
+    },
+    parse(jsonStr) {
+        // parse json string
+        let encarray = jsonStr.split('_')
+        console.log('parsing it out', encarray);
+        // var jsonObj = JSON.parse(jsonStr);
+
+        // extract ciphertext from json object, and create cipher params object
+        var cipherParams = crypto.lib.CipherParams.create({
+            ciphertext: crypto.enc.Hex.parse(encarray[0])
+        });
+
+        // optionally extract iv or salt
+
+        if (encarray[1]) {
+            cipherParams.iv = crypto.enc.Hex.parse(encarray[1]);
+        }
+
+        if (encarray[2]) {
+            cipherParams.salt = crypto.enc.Hex.parse(encarray[2]);
+        }
+        return cipherParams;
+    }
+}
+const methods = {
+    encryptphrase(phrase, pass) {
+        if (!pass) { const pass = fs.readFileSync(`./keys/phrase.password`, { encoding: 'utf8', flag: 'r' }) }
+        const encrypted = crypto.AES.encrypt(phrase, pass, { format });
+        // fs.writeFileSync('./crypto.hash', encrypted.toString())
+        return encrypted.toString();
+    },
+    decryptphrase(emsg, pass) {
+        if (!pass) { const pass = fs.readFileSync(`./keys/phrase.password`, { encoding: 'utf8', flag: 'r' }) }
+        // console.log('wait', {emsg, pass});
+        const decrypted = crypto.AES.decrypt(emsg, pass, { format });
+        // console.log({d: decrypted.toString(crypto.enc.Utf8)});
+        return decrypted.toString(crypto.enc.Utf8);
+    },
+
+}
 
 console.log('must arrange endpoints, describe required data structures, etc ')
 app.get('/', (req, res) => {
@@ -31,44 +88,68 @@ app.get('/', (req, res) => {
     // console.log('connecting python serialization with js / json api', ret)
     // return ret
     // });
-    let pyshell = new PythonShell('python/api.py');
-    pyshell.send('getaddress')
-    pyshell.on('message', (msg, err)=>{
-        console.log('incoming message from api.py', err, msg, typeof msg);
-        return res.send(msg)
-    })
-    return pyshell.end(function (err,code,signal) {
-        if (err) throw err;
-        console.log('The exit code was: ' + code);
-        console.log('The exit signal was: ' + signal);
-        console.log('finished');
-      });
+
+    // working example
+    // let pyshell = new PythonShell('python/api.py');
+    // pyshell.send('getaddress')
+    // pyshell.on('message', (msg, err)=>{
+    //     console.log('incoming message from api.py', err, msg, typeof msg);
+    //     return res.send(msg)
+    // })
+    // return pyshell.end(function (err,code,signal) {
+    //     if (err) throw err;
+    //     console.log('The exit code was: ' + code);
+    //     console.log('The exit signal was: ' + signal);
+    //     console.log('finished');
+    //   });
     // console.log({pyshell});
     // 
     // return PythonShell.run('python/api.py', null, function (err, resp) {
     // if (err) throw err;
     // console.log('finished', resp);
-    // return res.send(`
-    // <h1>OK start api again</h1>
-    // <div>Let's be realistic this time and only expose what's useful and necessary!</div>
-    // <ol>
-    //     <li>QR Codes</li>
-    //     <li>Minting NFT</li>
-    //     <li>Listing NFT</li>
-    //     <li>Selling NFT</li>
-    //     <li>Create Transaction</li>
-    //     <li>Submit Transaction</li>
-    //     <li>Encrypt Message</li>
-    //     <li>Decrypt Message</li>
-    //     <li>Sign Message</li>
-    //     <li>Verify Message</li>
-    // </ol>
+    const API = {
+        'create keys': '/createkeys?password=swordfish'
+    }
+    apistring = ''
+    Object.entries(API).forEach(x=>apistring = apistring+`<div><a href="${x[1]}">${x[0]}</a><div>`)
+
+    return res.send(`
+    ${apistring}
+    <h1>OK start api again</h1>
+    <div>Let's be realistic this time and only expose what's useful and necessary!</div>
+    <p>First, about keys.. currently we have hard keys on the server. We need to encrypt these with a symmetrical key delivered from the cloud server.</p>
+    <ol>
+        <li>QR Codes</li>
+        <li>Minting NFT</li>
+        <li>Listing NFT</li>
+        <li>Selling NFT</li>
+        <li>Create Transaction</li>
+        <li>Submit Transaction</li>
+        <li>Encrypt Message</li>
+        <li>Decrypt Message</li>
+        <li>Sign Message</li>
+        <li>Verify Message</li>
+    </ol>`)
     // `+ resp)
     // });
     
 })
 app.get('/network-info', (req, res) => {
     console.log('network-info');
+    return res.send('ok')
+})
+app.get('/createkeys', (req, res) => {
+    console.log('creating keys', req.query);
+    const options = {
+        args: ['value1', 'value2', 'value3']
+    }
+    return PythonShell.run('python/createkeys.py', options, function (err, resp) {
+        console.log({resp, err});
+        // const encryptedkeys = methods.encryptphrase(resp[0], req.query.password)
+        // const decryptedkeys = methods.decryptphrase(encryptedkeys, req.query.password)
+        // JSON.parse(resp[0]).map(x=>console.log(x))
+        // return res.send({encryptedkeys, decryptedkeys});
+    })
     return res.send('ok')
 })
 app.get('/test', (req, res) => {
