@@ -4,7 +4,7 @@ import sys
 
 args = list(sys.argv)
 print(sys.argv)
-// secret = json.loads(sys.argv)
+# secret = json.loads(sys.argv)
 
 # payment_signing_key = secret
 # payment_verification_key = open("testpayment.vkey", 'r')
