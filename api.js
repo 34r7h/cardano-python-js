@@ -149,6 +149,7 @@ app.post('/updateapp', (req, res) => {
 	});
 })
 app.get('/createkeys', (req, res) => {
+    // REQUIRES: req.query.password
     console.log('creating keys ', req.query);
     const options = {
         args: ['value1', 'value2', 'value3']
@@ -156,20 +157,21 @@ app.get('/createkeys', (req, res) => {
     return PythonShell.run('python/createkeys.py', options, function (err, resp) {
         console.log({ resp, err });
         const encryptedkeys = methods.encryptphrase(resp[0], req.query.password)
-        const decryptedkeys = methods.decryptphrase(encryptedkeys, req.query.password)
-        console.log({ encryptedkeys, decryptedkeys });
+        // const decryptedkeys = methods.decryptphrase(encryptedkeys, req.query.password)
+        // console.log({ encryptedkeys, decryptedkeys });
         // JSON.parse(resp[0]).map(x=>console.log(x))
-        fs.writeFile("./keys/encryptedkeys.secret", encryptedkeys, function (err) {
-            if (err) {
-                return console.log(err);
-            }
-            console.log("The file was saved!");
-        });
+        // fs.writeFile("./keys/encryptedkeys.secret", encryptedkeys, function (err) {
+        //     if (err) {
+        //         return console.log(err);
+        //     }
+        //     console.log("The file was saved!");
+        // });
         return res.send({ encryptedkeys });
     })
     // return res.send('ok')
 })
 app.get('/getaddress', (req, res) => {
+    // REQUIRES: req.query.password
     console.log('getting an address', req.query);
     const fs = require('fs');
     let secret
@@ -179,11 +181,12 @@ app.get('/getaddress', (req, res) => {
             return;
         }
         console.log(data);
-        secret = data
+        secret = methods.decryptphrase(data, req.query.password)
     });
     const options = {
         args: [secret]
     }
+    console.log({secret});
     return PythonShell.run('python/getaddress.py', options, function (err, resp) {
         console.log({ resp, err });
         return res.send({ resp });
