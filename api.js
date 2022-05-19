@@ -140,7 +140,7 @@ app.get('/network-info', (req, res) => {
     return res.send('ok')
 })
 app.post('/updateapp', (req, res) => {
-    console.log('Dangerously exposing git pull for dev convenience.. e.g. VSCode is still Microsoft.');
+    console.log('WARNING: Dangerously exposing git pull for dev convenience.. e.g. VSCode is still Microsoft.Please remove for production.');
     console.log(4+4+4);
 	const { exec } = require('child_process');
 
