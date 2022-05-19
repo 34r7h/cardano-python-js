@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "serve": "nodemon ./index.js",
-    "test": "node ./test.js"
+    "test": "node ./test.js",
+    "push": "git add . && git commit -m 'automating push' && git push"
   },
   "keywords": [
     "cardano",
