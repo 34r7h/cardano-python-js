@@ -149,7 +149,7 @@ app.post('/updateapp', (req, res) => {
 	});
 })
 app.get('/createkeys', (req, res) => {
-    console.log('creating keys', req.query);
+    console.log('creating keys ', req.query);
     const options = {
         args: ['value1', 'value2', 'value3']
     }
