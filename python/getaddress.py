@@ -2,7 +2,7 @@ from pycardano import Address, Network
 import json
 import sys
 
-args = list(sys.argv[1:])
+args = list(sys.argv)
 secret = json.loads(args)
 print(secret)
 
