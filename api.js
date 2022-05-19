@@ -180,18 +180,19 @@ app.get('/getaddress', (req, res) => {
             console.error(err);
             return;
         }
-        console.log(data);
         secret = methods.decryptphrase(data, req.query.password)
+        console.log({data, secret});
+        const options = {
+            args: [secret]
+        }
+        console.log({secret});
+        return PythonShell.run('python/getaddress.py', options, function (err, resp) {
+            console.log({ resp, err });
+            return res.send({ resp });
+        })
+        // return res.send('ok')
     });
-    const options = {
-        args: [secret]
-    }
-    console.log({secret});
-    return PythonShell.run('python/getaddress.py', options, function (err, resp) {
-        console.log({ resp, err });
-        return res.send({ resp });
-    })
-    // return res.send('ok')
+    
 })
 
 app.get('/test', (req, res) => {
