@@ -13,7 +13,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const port = !dev && 80 || 8089
+const port = dev === false && 80 || 8089
 const portssl = 443
 const format = {
     stringify(cipherParams) {
