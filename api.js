@@ -120,7 +120,7 @@ app.get('/', (req, res) => {
     <div>Let's be realistic this time and only expose what's useful and necessary!</div>
     <p>First, about keys.. currently we have hard keys on the server. We need to encrypt these with a symmetrical key delivered from the cloud server.</p>
     <ol>
-        <li>QR Codes</li>
+        <li>QR Codes </li>
         <li>Minting NFT</li>
         <li>Listing NFT</li>
         <li>Selling NFT</li>
