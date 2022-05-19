@@ -181,11 +181,11 @@ app.get('/getaddress', (req, res) => {
             return;
         }
         secret = methods.decryptphrase(data, req.query.password)
-        console.log({data, secret});
+        // console.log({data, secret});
         const options = {
             args: secret
         }
-        console.log({secret});
+        // console.log({secret});
         return PythonShell.run('python/getaddress.py', options, function (err, resp) {
             console.log({ resp:resp[0], err });
             return res.send({ resp });
