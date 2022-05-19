@@ -136,7 +136,7 @@ app.get('/', (req, res) => {
 
 })
 app.get('/network-info', (req, res) => {
-    console.log('network-info 3');
+    console.log('network-info 4');
     return res.send('ok')
 })
 app.post('/updateapp', (req, res) => {
