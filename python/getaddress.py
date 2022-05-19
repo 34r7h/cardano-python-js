@@ -3,7 +3,7 @@ import json
 import sys
 
 args = list(sys.argv[1:])
-secret = json.loads(args[0])
+secret = json.loads(args)
 print(secret)
 
 payment_signing_key = secret
