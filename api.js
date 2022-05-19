@@ -6,7 +6,7 @@ const app = express()
 var cors = require('cors')
 var bodyParser = require('body-parser');
 const { exec } = require("child_process")
-let {PythonShell} = require('python-shell')
+let { PythonShell } = require('python-shell')
 const crypto = require("crypto-js");
 
 app.use(cors())
@@ -108,10 +108,11 @@ app.get('/', (req, res) => {
     // if (err) throw err;
     // console.log('finished', resp);
     const API = {
-        'create keys': '/createkeys?password=swordfish'
+        'create keys': '/createkeys?password=swordfish',
+        'get address': 'getaddress'
     }
     apistring = ''
-    Object.entries(API).forEach(x=>apistring = apistring+`<div><a href="${x[1]}">${x[0]}</a><div>`)
+    Object.entries(API).forEach(x => apistring = apistring + `<div><a href="${x[1]}">${x[0]}</a><div>`)
 
     return res.send(`
     ${apistring}
@@ -132,11 +133,20 @@ app.get('/', (req, res) => {
     </ol>`)
     // `+ resp)
     // });
-    
+
 })
 app.get('/network-info', (req, res) => {
     console.log('network-info');
     return res.send('ok')
+})
+app.post('/updateapp', (req, res) => {
+    console.log('Dangerously exposing git pull for dev convenience.. e.g. VSCode is still Microsoft.');
+	const { exec } = require('child_process');
+
+	exec('git pull', (err, stdout, stderr) => {
+ // handle err, stdout & stderr
+		console.log({err, stdout, stderr})
+	});
 })
 app.get('/createkeys', (req, res) => {
     console.log('creating keys', req.query);
@@ -144,14 +154,43 @@ app.get('/createkeys', (req, res) => {
         args: ['value1', 'value2', 'value3']
     }
     return PythonShell.run('python/createkeys.py', options, function (err, resp) {
-        console.log({resp, err});
-        // const encryptedkeys = methods.encryptphrase(resp[0], req.query.password)
-        // const decryptedkeys = methods.decryptphrase(encryptedkeys, req.query.password)
+        console.log({ resp, err });
+        const encryptedkeys = methods.encryptphrase(resp[0], req.query.password)
+        const decryptedkeys = methods.decryptphrase(encryptedkeys, req.query.password)
+        console.log({ encryptedkeys, decryptedkeys });
         // JSON.parse(resp[0]).map(x=>console.log(x))
-        // return res.send({encryptedkeys, decryptedkeys});
+        fs.writeFile("./keys/encryptedkeys.secret", encryptedkeys, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log("The file was saved!");
+        });
+        return res.send({ encryptedkeys });
     })
-    return res.send('ok')
+    // return res.send('ok')
 })
+app.get('/getaddress', (req, res) => {
+    console.log('getting an address', req.query);
+    const fs = require('fs');
+    let secret
+    fs.readFile('./keys/encryptedkeys.secret', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log(data);
+        secret = data
+    });
+    const options = {
+        args: [secret]
+    }
+    return PythonShell.run('python/getaddress.py', options, function (err, resp) {
+        console.log({ resp, err });
+        return res.send({ resp });
+    })
+    // return res.send('ok')
+})
+
 app.get('/test', (req, res) => {
     console.log('testing');
     let pyshell = new PythonShell('python/test.py');
@@ -159,16 +198,16 @@ app.get('/test', (req, res) => {
         args: ['value1', 'value2', 'value3']
     }
     PythonShell.run('python/test.py', options, function (err, resp) {
-        console.log({resp});
-        JSON.parse(resp[0]).map(x=>console.log(x))
+        console.log({ resp });
+        JSON.parse(resp[0]).map(x => console.log(x))
         return res.send('ok ' + JSON.parse(resp[0]));
     })
-    return pyshell.end(function (err,code,signal) {
+    return pyshell.end(function (err, code, signal) {
         if (err) throw err;
         console.log('The exit code was: ' + code);
         console.log('The exit signal was: ' + signal);
         console.log('finished');
-      });
+    });
 })
 app.post('/mint', (req, res) => {
     console.log('minting');
