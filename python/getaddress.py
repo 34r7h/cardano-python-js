@@ -4,10 +4,10 @@ import sys
 
 args = list(sys.argv)
 secret = json.loads(args)
-print(secret)
+print(secret[0])
 
-payment_signing_key = secret
-payment_verification_key = open("testpayment.vkey", 'r')
+# payment_signing_key = secret
+# payment_verification_key = open("testpayment.vkey", 'r')
 
 # base_address = Address(payment_part=payment_verification_key.hash(),
 #                        network=Network.MAINNET)
