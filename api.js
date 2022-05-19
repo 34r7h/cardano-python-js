@@ -187,7 +187,7 @@ app.get('/getaddress', (req, res) => {
         }
         // console.log({secret});
         return PythonShell.run('python/getaddress.py', options, function (err, resp) {
-            console.log({ resp:resp[0], err });
+            console.log({ resp, err });
             return res.send({ resp });
         })
         // return res.send('ok')
