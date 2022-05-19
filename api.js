@@ -130,13 +130,13 @@ app.get('/', (req, res) => {
         <li>Decrypt Message</li>
         <li>Sign Message</li>
         <li>Verify Message</li>
-    </ol>`)
+    </ol>`) 
     // `+ resp)
     // });
 
 })
 app.get('/network-info', (req, res) => {
-    console.log('network-info');
+    console.log('network-info 3');
     return res.send('ok')
 })
 app.post('/updateapp', (req, res) => {

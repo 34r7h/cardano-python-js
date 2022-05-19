@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "push",
+			"problemMatcher": [],
+			"label": "npm: push",
+			"detail": "git add . && git commit -m 'automating push' && git push"
+		}
+	]
+}

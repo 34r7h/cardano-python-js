@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "nodemon ./index.js",
     "test": "node ./test.js",
-    "push": "git add . && git commit -m 'automating push' && git push"
+    "push": "git add . && git commit -m 'automating push' && git push",
+    "connect": "gcloud compute ssh --zone 'us-central1-a' 'mainnet'  --tunnel-through-iap --project 'xmba-350512'"
   },
   "keywords": [
     "cardano",

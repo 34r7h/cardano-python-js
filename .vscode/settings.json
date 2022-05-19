@@ -1,5 +1,6 @@
 {
     "editor.codeActionsOnSave": {
         "task": true
-    }
+    },
+    "eslint.run": "onSave"
 }
