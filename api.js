@@ -8,11 +8,12 @@ var bodyParser = require('body-parser');
 const { exec } = require("child_process")
 let { PythonShell } = require('python-shell')
 const crypto = require("crypto-js");
-
+let dev = true
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const port = 80
+
+const port = !dev && 80 || 8089
 const portssl = 443
 const format = {
     stringify(cipherParams) {
@@ -55,13 +56,13 @@ const format = {
 }
 const methods = {
     encryptphrase(phrase, pass) {
-        if (!pass) { const pass = fs.readFileSync(`./keys/phrase.password`, { encoding: 'utf8', flag: 'r' }) }
+        if (!pass) { const pass = fs.readFileSync(`./keys/encryptedkeys.secret`, { encoding: 'utf8', flag: 'r' }) }
         const encrypted = crypto.AES.encrypt(phrase, pass, { format });
         // fs.writeFileSync('./crypto.hash', encrypted.toString())
         return encrypted.toString();
     },
     decryptphrase(emsg, pass) {
-        if (!pass) { const pass = fs.readFileSync(`./keys/phrase.password`, { encoding: 'utf8', flag: 'r' }) }
+        if (!pass) { const pass = fs.readFileSync(`./keys/encryptedkeys.secret`, { encoding: 'utf8', flag: 'r' }) }
         // console.log('wait', {emsg, pass});
         const decrypted = crypto.AES.decrypt(emsg, pass, { format });
         // console.log({d: decrypted.toString(crypto.enc.Utf8)});
@@ -130,7 +131,7 @@ app.get('/', (req, res) => {
         <li>Decrypt Message</li>
         <li>Sign Message</li>
         <li>Verify Message</li>
-    </ol>`) 
+    </ol>`)
     // `+ resp)
     // });
 
@@ -141,12 +142,12 @@ app.get('/network-info', (req, res) => {
 })
 app.post('/updateapp', (req, res) => {
     console.log('WARNING: Dangerously exposing git pull for dev convenience.. e.g. VSCode remote SSH is still Microsoft. Please remove for production.');
-	const { exec } = require('child_process');
+    const { exec } = require('child_process');
 
-	exec('git pull', (err, stdout, stderr) => {
- // handle err, stdout & stderr
-		console.log({err, stdout, stderr})
-	});
+    exec('git pull', (err, stdout, stderr) => {
+        // handle err, stdout & stderr
+        console.log({ err, stdout, stderr })
+    });
 })
 app.get('/createkeys', (req, res) => {
     // REQUIRES: req.query.password
@@ -181,18 +182,18 @@ app.get('/getaddress', (req, res) => {
             return;
         }
         secret = methods.decryptphrase(data, req.query.password)
-        // console.log({data, secret});
+        console.log({ data, secret }, typeof JSON.parse(secret));
         const options = {
             args: secret
         }
         // console.log({secret});
         return PythonShell.run('python/getaddress.py', options, function (err, resp) {
             console.log({ resp, err });
-            return res.send({ resp });
+            return res.send(resp[0]);
         })
         // return res.send('ok')
     });
-    
+
 })
 
 app.get('/test', (req, res) => {
@@ -212,6 +213,14 @@ app.get('/test', (req, res) => {
         console.log('The exit signal was: ' + signal);
         console.log('finished');
     });
+})
+app.get('/encrypt', (req, res) => {
+    let enc = methods.encryptphrase(JSON.stringify(req.query.msg), req.query.password)
+    return res.send(enc);
+})
+app.get('/decrypt', (req, res) => {
+    let dec = methods.decryptphrase(JSON.parse(req.query.msg), req.query.password)
+    return res.send(dec);
 })
 app.post('/mint', (req, res) => {
     console.log('minting');

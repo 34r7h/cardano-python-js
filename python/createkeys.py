@@ -7,8 +7,10 @@ payment_verification_key = payment_key_pair.verification_key
 stake_key_pair = StakeKeyPair.generate()
 stake_signing_key = stake_key_pair.signing_key
 stake_verification_key = stake_key_pair.verification_key
-# stake_verification_key.save('teststake.vkey')
-# stake_signing_key.save('teststake.skey')
+payment_verification_key.save('testpayment.vkey')
+payment_signing_key.save('testpayment.skey')
+stake_verification_key.save('teststake.vkey')
+stake_signing_key.save('teststake.skey')
 keys = {
     'payment': {
         'signing': payment_key_pair.signing_key,
