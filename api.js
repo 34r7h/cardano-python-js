@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 const { exec } = require("child_process")
 let { PythonShell } = require('python-shell')
 const crypto = require("crypto-js");
-let dev = true
+let dev = false
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
