@@ -7,7 +7,8 @@
     "serve": "nodemon ./index.js",
     "test": "node ./test.js",
     "push": "git add . && git commit -m 'automating push' && git push",
-    "connect": "gcloud compute ssh --zone 'us-central1-a' 'mainnet'  --tunnel-through-iap --project 'xmba-350512'"
+    "connect": "gcloud compute ssh --zone 'us-central1-a' 'mainnet'  --tunnel-through-iap --project 'xmba-350512'",
+    "dev": "PORT=8089 nodemon ./index.js --watch"
   },
   "keywords": [
     "cardano",

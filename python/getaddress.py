@@ -9,7 +9,7 @@ from pycardano import Key, Address, Network, PaymentVerificationKey
 # print('secret', type(secret))
 
 # payment_signing_key = secret
-# pkey = Key.from_json(secret)
+# pkey = Key.from_json(secret) 
 # payment_verification_key = pkey
 # print('payment_verification_key', payment_verification_key)
 # pkey = open('./testpayment.vkey', 'r')
