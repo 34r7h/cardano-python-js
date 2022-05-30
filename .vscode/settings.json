@@ -2,5 +2,6 @@
     "editor.codeActionsOnSave": {
         "task": true
     },
-    "eslint.run": "onSave"
+    "eslint.run": "onSave",
+    "python.formatting.provider": "black"
 }

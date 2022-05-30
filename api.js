@@ -148,39 +148,43 @@ app.post('/updateapp', (req, res) => {
         console.log({ err, stdout, stderr })
     });
 })
-app.get('/createkeys', (req, res) => {
-    // REQUIRES: req.query.password
-    console.log('creating keys ', req.query);
-    const options = {
-        args: ['value1', 'value2', 'value3']
-    }
-    return PythonShell.run('python/createkeys.py', options, function (err, resp) {
+app.post('/createkeys', (req, res) => {
+    // REQUIRES: req.body.passhash
+    console.log('creating keys crypto', {body: req.body});
+    return PythonShell.run('python/createkeys.py', null, function (err, resp) {
         console.log({ resp, err });
-        const encryptedkeys = methods.encryptphrase(resp[0], req.query.password)
-        // const decryptedkeys = methods.decryptphrase(encryptedkeys, req.query.password)
-        // console.log({ encryptedkeys, decryptedkeys });
+        let keys = JSON.parse(resp[0].replace(/'/g, '"'))
+        const stakevkey = keys.stake.signing.cborHex
+        const encryptedkeys = methods.encryptphrase(JSON.stringify(keys), req.body.passhash + stakevkey)
+        
+        const decryptedkeys = methods.decryptphrase(encryptedkeys, req.body.passhash + stakevkey)
+        console.log({ encryptedkeys, decryptedkeys, passhash: req.body.passhash, stakevkey: stakevkey});
+        var hash = crypto.SHA256(req.body.passhash + stakevkey);
         // JSON.parse(resp[0]).map(x=>console.log(x))
-        // fs.writeFile("./keys/encryptedkeys.secret", encryptedkeys, function (err) {
-        //     if (err) {
-        //         return console.log(err);
-        //     }
-        //     console.log("The file was saved!");
-        // });
-        return res.send({ encryptedkeys });
+        fs.writeFile(`./keys/${hash}.secret`, encryptedkeys, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+            console.log("The file was saved!");
+        });
+        console.log({encryptedkeys, verification:stakevkey + ''});
+        return res.send({verification: stakevkey+''});
     })
-    // return res.send('ok')
 })
-app.get('/getaddress', (req, res) => {
+app.post('/getaddress', (req, res) => {
     // REQUIRES: req.query.password
-    console.log('getting an address', req.query);
+    console.log('getaddress crypto', req.body);
     const fs = require('fs');
     let secret
-    fs.readFile('./keys/encryptedkeys.secret', 'utf8', (err, data) => {
+    var hash = crypto.SHA256(req.body.passhash + req.body.key);
+    console.log({hash: hash + ''});
+    fs.readFile(`./keys/${hash + ''}.secret`, 'utf8', (err, data) => {
+        console.log({data, err});
         if (err) {
-            console.error(err);
+            console.error(err); 
             return;
         }
-        secret = methods.decryptphrase(data, req.query.password)
+        secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
         console.log({ data, secret }, typeof JSON.parse(secret));
         const options = {
             args: secret
@@ -222,13 +226,28 @@ app.get('/decrypt', (req, res) => {
     return res.send(dec);
 })
 app.post('/mint', (req, res) => {
-    console.log('minting');
-    const options = {
-        args: ['value1', 'value2', 'value3']
-    }
-    return PythonShell.run('python/mint.py', null, function (err, resp) {
-        return res.send('ok ' + resp);
-    })
+    console.log({ minting: req.query });
+    const fs = require('fs');
+    let secret
+    fs.readFile('./keys/encryptedkeys.secret', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        if (!req.query.password) {
+            req.query.password = 'swordfish'
+        }
+
+        secret = methods.decryptphrase(data, req.query.password)
+        console.log({ data, secret }, typeof JSON.parse(secret));
+        const options = {
+            args: [req.query.address, req.query.data, req.query.bf]
+        }
+        return PythonShell.run('python/mint.py', options, function (err, resp) {
+            console.log({ resp });
+            return res.send(resp);
+        })
+    });
 })
 app.post('/createtx', (req, res) => {
     console.log('creating tx');

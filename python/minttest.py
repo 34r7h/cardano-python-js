@@ -1,81 +1,32 @@
 """
 This is a complete walk through of minting a NFT on Cardano blockchain in pure Python code.
+
 This example is inspired by https://developers.cardano.org/docs/native-tokens/minting-nfts#crafting-the-transaction
+
 # Submitted transaction in this example could be found at
 # https://testnet.cardanoscan.io/transaction/632898c831719e07ad74b952880c98e9b51a1f31b25ca99e5a6e753ecd5d5201
 """
 import pathlib
-import sys
-import json
-from datetime import datetime
+
 from pycardano import *
 
-now = datetime.now()
-if len(sys.argv) > 1:
-    ### args = [address, data, blockfrostid]
-    args = list(sys.argv[1:])
-    tokenmetadata = json.loads(args[1])
-    tokenmetadata['mintedon'] = now.strftime("%d/%m/%Y %H:%M:%S")
-    
-
-else:
-    args = [
-        "addr1qxvqw3xawj76533sf8dl4rkm9sn5t4vfzwgtc0mvmcjpmgee8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57assqu5h5",
-        {
-            "artist": "Glootie",
-            "description": "hello multiverse",
-            "ticker": "",
-            "collection": "XMBL tests",
-            "creator": "Glootie",
-            "discord": "https://discord.gg/446844338538938378",
-            "rarity": "Tier 1 (1 of 1)",
-            "set": "XMBLs (1 of 1)",
-            "twitter": "https://twitter/i34r7h",
-            "copyright": "Copyright 2021 no one ever",
-            "files": [
-                {
-                    "mediaType": "image/png",
-                    "name": "Screen Shot 2022-05-15 at 23.00.50.png",
-                    "src": "ipfs://QmXTEAAeY9Ruhxokc2r3LsNqmGn57hntqe6ab9PMiNtyUv",
-                }
-            ],
-            "xymboltoken": "c97280de5e7d565d84b913cf26d0b262a15f48b044ef37cc6a826267b0c1da73",
-            "imagehash": "b3be95302ad2ac7769b17ff8c80bd1eee49b9bd28b21ba3a11d9ae4a9513a870",
-            "ipfs": "QmXTEAAeY9Ruhxokc2r3LsNqmGn57hntqe6ab9PMiNtyUv",
-            "filehash": "1a8d3562152341587b77507db8e4a22a37ade0454b16abdff70053a0cedde9fb",
-            "id": "c97280de5e7d565d84b913cf26d0b262a15f48b044ef37cc6a826267b0c1da73",
-            "image": "ipfs://QmXTEAAeY9Ruhxokc2r3LsNqmGn57hntqe6ab9PMiNtyUv",
-            "mediaType": "image/png",
-            "name": "Testing " + now.strftime("%d/%m/%Y %H:%M:%S"),
-            "supply": "1",
-            "size": "24218",
-        },
-        "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
-    ]
-    # print("no args", sys.argv)
-    tokenmetadata = args[1]
-
-sendaddress = Address.from_primitive(args[0])
-bf = args[2]
-
 # Copy your BlockFrost project ID below. Go to https://blockfrost.io/ for more information.
-BLOCK_FROST_PROJECT_ID = bf
+BLOCK_FROST_PROJECT_ID = "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza"
 NETWORK = Network.MAINNET
 
 chain_context = BlockFrostChainContext(
     project_id=BLOCK_FROST_PROJECT_ID, network=NETWORK
 )
-# print([sendaddress, tokenmetadata, bf])
-# print(tokenmetadata, type(tokenmetadata) )
-# """Preparation"""
+
+"""Preparation"""
 # Define the root directory where images and keys will be stored.
-PROJECT_ROOT = "nft"
+PROJECT_ROOT = "my_nft"
 root = pathlib.Path(PROJECT_ROOT)
 
-# # Create the directory if it doesn't exist
+# Create the directory if it doesn't exist
 root.mkdir(parents=True, exist_ok=True)
 
-# """Generate keys"""
+"""Generate keys"""
 key_dir = root / "keys"
 key_dir.mkdir(exist_ok=True)
 
@@ -97,20 +48,11 @@ def load_or_create_key_pair(base_dir, base_name):
     return skey, vkey
 
 
-pkey = PaymentVerificationKey.load("testpayment.vkey")
-skey = PaymentSigningKey.load("testpayment.skey")
-spkey = PaymentVerificationKey.load("teststake.vkey")
-# print('payment keys', pkey, skey)
-
-address = Address(
-    payment_part=pkey.hash(), staking_part=spkey.hash(), network=Network.MAINNET
-)
-# print(address)
-
-# # Payment address. Send some ADA (~5 ADA is enough) to this address, so we can pay the minting fee later.
-# payment_skey, payment_vkey = load_or_create_key_pair(key_dir, "payment")
-# address = Address(payment_vkey.hash(), network=NETWORK)
-# print(address)
+# Payment address. Send some ADA (~5 ADA is enough) to this address, so we can pay the minting fee later.
+payment_skey, payment_vkey = load_or_create_key_pair(key_dir, "payment")
+address = Address(payment_vkey.hash(), network=NETWORK)
+sendaddress = Address.from_primitive('addr1q8ttyq3v5pxcjfzye25ut3jsu2w32fetgvyrhpzf89xa0rumh2acwnl6ayg5w380t2gyshkf2hdqx9z6tr7na5hmkt2stttyq6')
+print(address, sendaddress)
 
 # Generate policy keys, which will be used when minting NFT
 policy_skey, policy_vkey = load_or_create_key_pair(key_dir, "policy")
@@ -127,7 +69,7 @@ policy = ScriptAll([pub_key_policy, must_before_slot])
 
 # Calculate policy ID, which is the hash of the policy
 policy_id = policy.hash()
-# print(f"Policy ID: {policy_id}")
+print(f"Policy ID: {policy_id}")
 with open(root / "policy.id", "a+") as f:
     f.truncate(0)
     f.write(str(policy_id))
@@ -136,11 +78,11 @@ with open(root / "policy.id", "a+") as f:
 # Create an asset container
 my_asset = Asset()
 # Create names for our assets
-nft1 = AssetName(bytes(tokenmetadata['name'], 'utf-8'))
-# nft2 = AssetName(b"MY_NFT_2")
+nft1 = AssetName(b"MY_NFT_1")
+nft2 = AssetName(b"MY_NFT_2")
 # Put assets into the asset container with a quantity of 1
 my_asset[nft1] = 1
-# my_asset[nft2] = 1
+my_asset[nft2] = 1
 
 # Create a MultiAsset container
 my_nft = MultiAsset()
@@ -157,8 +99,8 @@ native_scripts = [policy]
 my_nft_alternative = MultiAsset.from_primitive(
     {
         policy_id.payload: {  # Use policy ID created from above. We can't use policy_id here because policy_id's type  # is ScriptHash, which is not a primitive type. Instead, we use policy_id.payload (bytes)
-            bytes(tokenmetadata['name'], 'utf-8'): 1,  # Name of our NFT1  # Quantity of this NFT
-            # b"MY_NFT_2": 1,  # Name of our NFT2  # Quantity of this NFT
+            b"MY_NFT_1": 1,  # Name of our NFT1  # Quantity of this NFT
+            b"MY_NFT_2": 1,  # Name of our NFT2  # Quantity of this NFT
         }
     }
 )
@@ -172,13 +114,18 @@ metadata = {
     721: {  # 721 refers to the metadata label registered for NFT standard here:
         # https://github.com/cardano-foundation/CIPs/blob/master/CIP-0010/registry.json#L14-L17
         policy_id.payload.hex(): {
-            tokenmetadata['name']: tokenmetadata,
-            # "MY_NFT_2": {
-            #     "description": "This is my second NFT thanks to PyCardano",
-            #     "name": "PyCardano NFT example token 2",
-            #     "id": 2,
-            #     "image": "ipfs://QmRhTTbUrPYEw3mJGGhQqQST9k86v1DPBiTTWJGKDJsVFw",
-            # },
+            "MY_NFT_1": {
+                "description": "This is my first NFT thanks to PyCardano",
+                "name": "PyCardano NFT example token 1",
+                "id": 1,
+                "image": "ipfs://QmRhTTbUrPYEw3mJGGhQqQST9k86v1DPBiTTWJGKDJsVFw",
+            },
+            "MY_NFT_2": {
+                "description": "This is my second NFT thanks to PyCardano",
+                "name": "PyCardano NFT example token 2",
+                "id": 2,
+                "image": "ipfs://QmRhTTbUrPYEw3mJGGhQqQST9k86v1DPBiTTWJGKDJsVFw",
+            },
         }
     }
 }
@@ -211,15 +158,14 @@ min_val = min_lovelace(Value(0, my_nft), chain_context)
 
 # Send the NFT to our own address
 builder.add_output(TransactionOutput(sendaddress, Value(min_val, my_nft)))
-# print('builder', builder)
-# Create final signed transaction
-signed_tx = builder.build_and_sign([skey, policy_skey], change_address=address)
 
-# print("############### Transaction created ###############")
-# print(signed_tx)
-# print(signed_tx.to_cbor())
+# Create final signed transaction
+signed_tx = builder.build_and_sign([payment_skey, policy_skey], change_address=address)
+
+print("############### Transaction created ###############")
+print(signed_tx)
+print(signed_tx.to_cbor())
 
 # Submit signed transaction to the network
 print("############### Submitting transaction ###############")
 chain_context.submit_tx(signed_tx.to_cbor())
-print(policy_id, sendaddress)
