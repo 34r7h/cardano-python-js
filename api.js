@@ -196,7 +196,6 @@ app.post('/getaddress', (req, res) => {
         })
         // return res.send('ok')
     });
-
 })
 
 app.get('/test', (req, res) => {
