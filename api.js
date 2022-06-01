@@ -3,7 +3,7 @@ var http = require('http')
 var https = require('https')
 const express = require('express')
 const app = express()
-var cors = require('cors')
+const cors = require('cors')({ origin: true });
 var bodyParser = require('body-parser');
 const { exec } = require("child_process")
 let { PythonShell } = require('python-shell')
@@ -53,6 +53,7 @@ const format = {
         return cipherParams;
     }
 }
+
 const methods = {
     encryptphrase(phrase, pass) {
         if (!pass) { const pass = fs.readFileSync(`./keys/encryptedkeys.secret`, { encoding: 'utf8', flag: 'r' }) }
