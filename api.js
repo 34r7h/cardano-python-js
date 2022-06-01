@@ -138,7 +138,7 @@ app.get('/', (req, res) => {
 })
 app.get('/network-info', (req, res) => {
     console.log('network-info 4');
-    return cors(req, res, ()=>res.send('ok'))
+    return res.send('ok')
 })
 app.post('/updateapp', (req, res) => {
     console.log('WARNING: Dangerously exposing git pull for dev convenience.. e.g. VSCode remote SSH is still Microsoft. Please remove for production.');
