@@ -163,7 +163,7 @@ app.post('/createkeys', (req, res) => {
                 return console.log(err);
             }
             console.log("The file was saved!");
-            console.log({ encryptedkeys, verification: stakevkey + '' });
+            console.log('returning', { encryptedkeys, verification: stakevkey + '' });
             return res.send({ encryptedkeys, verification: stakevkey + '' })
         });
     })
@@ -182,14 +182,14 @@ app.post('/getaddress', (req, res) => {
             return;
         }
         secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
-        console.log({ data, secret }, typeof JSON.parse(secret));
+        // console.log({ data, secret }, typeof JSON.parse(secret));
         const options = {
             args: secret
         }
         // console.log({secret});
         return PythonShell.run('python/getaddress.py', options, function (err, resp) {
             console.log({ resp, err });
-            return cors(req, res, async () => res.send(resp[0]))
+            return res.send(resp[0])
         })
         // return res.send('ok')
     });
