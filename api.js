@@ -137,7 +137,7 @@ app.get('/', (req, res) => {
 
 })
 app.get('/network-info', (req, res) => {
-    console.log('network-info 4');
+    console.log('network-info');
     return res.send('ok')
 })
 app.post('/updateapp', (req, res) => {
@@ -169,7 +169,7 @@ app.post('/createkeys', (req, res) => {
             console.log("The file was saved!");
         });
         console.log({encryptedkeys, verification:stakevkey + ''});
-        return cors(req, res, async () => res.send({encryptedkeys, verification:stakevkey + ''}))
+        return res.send({encryptedkeys, verification:stakevkey + ''})
 
         return res.send({verification: stakevkey+''});
     })
