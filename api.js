@@ -3,7 +3,7 @@ var http = require('http')
 var https = require('https')
 const express = require('express')
 const app = express()
-const cors = require('cors')({ origin: true });
+const cors = require('cors');
 var bodyParser = require('body-parser');
 const { exec } = require("child_process")
 let { PythonShell } = require('python-shell')
@@ -158,8 +158,8 @@ app.post('/createkeys', (req, res) => {
         const stakevkey = keys.stake.signing.cborHex
         const encryptedkeys = methods.encryptphrase(JSON.stringify(keys), req.body.passhash + stakevkey)
         
-        const decryptedkeys = methods.decryptphrase(encryptedkeys, req.body.passhash + stakevkey)
-        console.log({ encryptedkeys, decryptedkeys, passhash: req.body.passhash, stakevkey: stakevkey});
+        // const decryptedkeys = methods.decryptphrase(encryptedkeys, req.body.passhash + stakevkey)
+        // console.log({ encryptedkeys, decryptedkeys, passhash: req.body.passhash, stakevkey: stakevkey});
         var hash = crypto.SHA256(req.body.passhash + stakevkey);
         // JSON.parse(resp[0]).map(x=>console.log(x))
         fs.writeFile(`./keys/${hash}.secret`, encryptedkeys, function (err) {
@@ -193,7 +193,7 @@ app.post('/getaddress', (req, res) => {
         // console.log({secret});
         return PythonShell.run('python/getaddress.py', options, function (err, resp) {
             console.log({ resp, err });
-            return res.send(resp[0]);
+            return cors(req, res, async () => res.send(resp[0]))
         })
         // return res.send('ok')
     });
