@@ -166,8 +166,6 @@ app.post('/createkeys', (req, res) => {
             console.log({ encryptedkeys, verification: stakevkey + '' });
             return cors(req, res, () => res.send({ encryptedkeys, verification: stakevkey + '' }))
         });
-
-
     })
 })
 app.post('/getaddress', (req, res) => {
