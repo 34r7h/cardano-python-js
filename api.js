@@ -169,6 +169,8 @@ app.post('/createkeys', (req, res) => {
             console.log("The file was saved!");
         });
         console.log({encryptedkeys, verification:stakevkey + ''});
+        return cors(req, res, async () => res.send({encryptedkeys, verification:stakevkey + ''}))
+
         return res.send({verification: stakevkey+''});
     })
 })
