@@ -151,27 +151,23 @@ app.post('/updateapp', (req, res) => {
 })
 app.post('/createkeys', (req, res) => {
     // REQUIRES: req.body.passhash
-    console.log('creating keys crypto', {body: req.body});
+    console.log('creating keys crypto', { body: req.body });
     return PythonShell.run('python/createkeys.py', null, function (err, resp) {
         console.log({ resp, err });
         let keys = JSON.parse(resp[0].replace(/'/g, '"'))
         const stakevkey = keys.stake.signing.cborHex
         const encryptedkeys = methods.encryptphrase(JSON.stringify(keys), req.body.passhash + stakevkey)
-        
-        // const decryptedkeys = methods.decryptphrase(encryptedkeys, req.body.passhash + stakevkey)
-        // console.log({ encryptedkeys, decryptedkeys, passhash: req.body.passhash, stakevkey: stakevkey});
         var hash = crypto.SHA256(req.body.passhash + stakevkey);
-        // JSON.parse(resp[0]).map(x=>console.log(x))
-        fs.writeFile(`./keys/${hash}.secret`, encryptedkeys, function (err) {
+        return fs.writeFile(`./keys/${hash}.secret`, encryptedkeys, function (err) {
             if (err) {
                 return console.log(err);
             }
             console.log("The file was saved!");
+            console.log({ encryptedkeys, verification: stakevkey + '' });
+            return cors(req, res, () => res.send({ encryptedkeys, verification: stakevkey + '' }))
         });
-        console.log({encryptedkeys, verification:stakevkey + ''});
-        return res.send({encryptedkeys, verification:stakevkey + ''})
 
-        return res.send({verification: stakevkey+''});
+
     })
 })
 app.post('/getaddress', (req, res) => {
@@ -180,11 +176,11 @@ app.post('/getaddress', (req, res) => {
     const fs = require('fs');
     let secret
     var hash = crypto.SHA256(req.body.passhash + req.body.key);
-    console.log({hash: hash + ''});
+    console.log({ hash: hash + '' });
     fs.readFile(`./keys/${hash + ''}.secret`, 'utf8', (err, data) => {
-        console.log({data, err});
+        console.log({ data, err });
         if (err) {
-            console.error(err); 
+            console.error(err);
             return;
         }
         secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
