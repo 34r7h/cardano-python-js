@@ -1,0 +1,20 @@
+{"payment": {"signing": {
+            "type": "PaymentSigningKeyShelley_ed25519",
+            "description": "PaymentSigningKeyShelley_ed25519",
+            "cborHex": "5820d5eab6c1c4986a39a230537e8a6eb11f49dbb8a7bd8e368967eb84bebfb7e488"
+        }, "verification": {
+            "type": "PaymentVerificationKeyShelley_ed25519",
+            "description": "PaymentVerificationKeyShelley_ed25519",
+            "cborHex": "582086d38b30b6a2b42dd1258f8c7ce3e26096776f898d41f5dbb4c70277fd3bb4ec"
+        }
+    }, "stake": {"signing": {
+            "type": "StakeSigningKeyShelley_ed25519",
+            "description": "StakeSigningKeyShelley_ed25519",
+            "cborHex": "58208fd907a4b148843e7a091cfc6b55231b0ce9287bda9c3dbd8b5edb98c9ea4163"
+        }, "verification": {
+            "type": "StakeVerificationKeyShelley_ed25519",
+            "description": "StakeVerificationKeyShelley_ed25519",
+            "cborHex": "5820b99ba95ad8f4856d1c003456473c3189362c7d2d879f98d9b0cd755637a41e2e"
+        }
+    }
+}

@@ -11,7 +11,7 @@ const crypto = require("crypto-js");
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+let dev = process.env.PORT && true
 const port = process.env.PORT || 80
 const portssl = 443
 const format = {
@@ -153,7 +153,7 @@ app.post('/createkeys', (req, res) => {
     // REQUIRES: req.body.passhash
     console.log('creating keys crypto', { body: req.body });
     return PythonShell.run('python/createkeys.py', null, function (err, resp) {
-        console.log({ resp, err });
+        dev && console.log({ resp, err });
         let keys = JSON.parse(resp[0].replace(/'/g, '"'))
         const stakevkey = keys.stake.signing.cborHex
         const encryptedkeys = methods.encryptphrase(JSON.stringify(keys), req.body.passhash + stakevkey)
@@ -162,8 +162,8 @@ app.post('/createkeys', (req, res) => {
             if (err) {
                 return console.log(err);
             }
-            console.log("The file was saved!");
-            console.log('returning', { encryptedkeys, verification: stakevkey + '' });
+            dev && console.log("The file was saved!");
+            dev && console.log('returning', { encryptedkeys, verification: stakevkey + '' });
             return res.send({ encryptedkeys, verification: stakevkey + '' })
         });
     })
@@ -247,9 +247,29 @@ app.post('/mint', (req, res) => {
 })
 app.post('/createtx', (req, res) => {
     console.log('creating tx');
-    return PythonShell.run('python/createtx.py', null, function (err, resp) {
-        return res.send('ok ' + resp);
-    })
+    const fs = require('fs');
+    let secret
+    var hash = crypto.SHA256(req.body.passhash + req.body.key);
+    console.log({ hash: hash + '' });
+    fs.readFile(`./keys/${hash + ''}.secret`, 'utf8', (err, data) => {
+        console.log({ data, err });
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
+        // console.log({ data, secret }, typeof JSON.parse(secret));
+        const options = {
+            args: [secret, req.body.data]
+        }
+
+        return PythonShell.run('python/createtx.py', options, function (err, resp) {
+            // console.log({ resp, err });
+            return res.send(resp[0])
+        })
+        // return res.send('ok')
+    });
 })
 
 app.post('/sign', (req, res) => {

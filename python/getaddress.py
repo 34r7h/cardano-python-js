@@ -1,8 +1,7 @@
-from pycardano import Key, Address, Network, PaymentVerificationKey, StakeVerificationKey, PaymentKeyPair, StakeKeyPair
+from pycardano import Address, Network, PaymentVerificationKey, StakeVerificationKey
 import json
 import sys
 # TODO encrypt and test for production keys
-
 
 args = sys.argv[1:]
 secret = args[0]
