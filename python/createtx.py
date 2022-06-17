@@ -2,26 +2,31 @@ from pycardano import BlockFrostChainContext, Network, PaymentSigningKey, Paymen
 import json
 import sys
 
-print('\n i will create a tx if you supply purpose and relevant checks along with moneies. \n')
+args = sys.argv[1:]
+secret = args[0]
+data = args[1]
+bf = args[2]
 
-# args = sys.argv[1:]
-# secret = args[0]
-# jsonsecret = json.loads(secret)
+jsonsecret = json.loads(secret)
+jsondata = json.loads(data)
+# print('\n', jsondata, type(jsondata), '\n', bf, '\n')
+# print('\n', jsonsecret, type(jsondata), '\n', bf, '\n')
 
-# pkey  = jsonsecret['payment']['verification']['cborHex']
-# skey  = jsonsecret['stake']['verification']['cborHex']
+pkey  = jsonsecret['payment']['signing']['cborHex']
+vkey  = jsonsecret['payment']['verification']['cborHex']
 
 network = Network.MAINNET
-context = BlockFrostChainContext("mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza", network)
+context = BlockFrostChainContext(bf, network)
 
-sk = PaymentSigningKey.from_cbor('5820d5eab6c1c4986a39a230537e8a6eb11f49dbb8a7bd8e368967eb84bebfb7e488')
+sk = PaymentSigningKey.from_cbor(pkey)
 vk = PaymentVerificationKey.from_signing_key(sk)
-address = Address.from_primitive('addr1qytqt3v9ej3kzefxcy8f59h9atf2knracnj5snkgtaea6p4r8g3mu652945v3gldw7v88dn5lrfudx0un540ak9qt2kqhfjl0d')
+address = Address.from_primitive(jsondata['address'])
 
 builder = TransactionBuilder(context)
 builder.add_input_address(address)
 utxos = context.utxos(str(address))
-print('\nutxos',utxos)
+# print('\n\n utxos',utxos,'\n\n')
+
 if len(utxos) == 0:
     print('No utxos available on this address')
 elif len(utxos) == 1:
@@ -30,22 +35,27 @@ elif len(utxos) == 1:
 else:
     print('use builder\n')
 
-
-builder.add_output(
-    TransactionOutput(
-        Address.from_primitive(
-            "addr1qyady0evsaxqsfmz0z8rvmq62fmuas5w8n4m8z6qcm4wrt3e8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57ashysyee"
-        ),
-        Value.from_primitive(
-            [
-                1000000,
-            ]
-        ),
-    )
+for x in jsondata['outputs']:
+    # print('\n\n', x, '\n\n')
+    outputaddress = x['address']
+    tokens = []
+    for y in x['tokens']:
+        # print('\n\n', y, '\n\n')
+        if y['unit'] == 'lovelace':
+            tokens.append(int(y['quantity']))
+    builder.add_output(
+        TransactionOutput(
+            Address.from_primitive(outputaddress),
+            Value.from_primitive(tokens)
+        )
 )
-signed_tx = builder.build_and_sign([sk], change_address=address)
-tx_id = str(signed_tx.id)
+# print(outputaddress, type(outputaddress), tokens, type(tokens))
 
+
+# print(builder)
+signed_tx = builder.build_and_sign([sk], change_address=address )
+tx_id = str(signed_tx.id)
+# print(signed_tx, tx_id)
 # todo remove submit to it's own function
 context.submit_tx(signed_tx.to_cbor())
 print('\nTX Details\n', builder, '\n', signed_tx, tx_id)

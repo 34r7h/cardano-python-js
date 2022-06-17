@@ -33,7 +33,7 @@ const format = {
     parse(jsonStr) {
         // parse json string
         let encarray = jsonStr.split('_')
-        console.log('parsing it out', encarray);
+        // console.log('parsing it out', encarray);
         // var jsonObj = JSON.parse(jsonStr);
 
         // extract ciphertext from json object, and create cipher params object
@@ -246,26 +246,26 @@ app.post('/mint', (req, res) => {
     });
 })
 app.post('/createtx', (req, res) => {
-    console.log('creating tx');
+    // console.log('creating tx', JSON.stringify(req.body));
     const fs = require('fs');
     let secret
     var hash = crypto.SHA256(req.body.passhash + req.body.key);
-    console.log({ hash: hash + '' });
+    // console.log({ hash: hash + '' });
     fs.readFile(`./keys/${hash + ''}.secret`, 'utf8', (err, data) => {
-        console.log({ data, err });
+        // console.log({ data, err });
         if (err) {
             console.error(err);
             return;
         }
 
         secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
-        // console.log({ data, secret }, typeof JSON.parse(secret));
+        // console.log({ secret }, typeof JSON.parse(secret));
         const options = {
-            args: [secret, req.body.data]
+            args: [secret, req.body.data, req.body.bf]
         }
 
         return PythonShell.run('python/createtx.py', options, function (err, resp) {
-            // console.log({ resp, err });
+            console.log({ resp, err });
             return res.send(resp[0])
         })
         // return res.send('ok')
