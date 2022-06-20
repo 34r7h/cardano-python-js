@@ -263,10 +263,11 @@ app.post('/createtx', (req, res) => {
         const options = {
             args: [secret, req.body.data, req.body.bf]
         }
+        console.log('\n\n',JSON.stringify(options), '\n\n')
 
         return PythonShell.run('python/createtx.py', options, function (err, resp) {
             console.log({ resp, err });
-            return res.send(resp[0])
+            return res.send(err || resp[0])
         })
         // return res.send('ok')
     });
