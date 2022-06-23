@@ -156,6 +156,7 @@ app.post('/createkeys', (req, res) => {
         dev && console.log({ resp, err });
         let keys = JSON.parse(resp[0].replace(/'/g, '"'))
         const stakevkey = keys.stake.signing.cborHex
+        // TODO revisit encryption scheme.. why using stake signing key?
         const encryptedkeys = methods.encryptphrase(JSON.stringify(keys), req.body.passhash + stakevkey)
         var hash = crypto.SHA256(req.body.passhash + stakevkey);
         return fs.writeFile(`./keys/${hash}.secret`, encryptedkeys, function (err) {
@@ -246,30 +247,35 @@ app.post('/mint', (req, res) => {
     });
 })
 app.post('/createtx', (req, res) => {
-    // console.log('creating tx', JSON.stringify(req.body));
+    console.log('creating tx', JSON.stringify(req.body));
     const fs = require('fs');
     let secret
     var hash = crypto.SHA256(req.body.passhash + req.body.key);
-    // console.log({ hash: hash + '' });
     fs.readFile(`./keys/${hash + ''}.secret`, 'utf8', (err, data) => {
         // console.log({ data, err });
         if (err) {
             console.error(err);
             return;
         }
-
         secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
         // console.log({ secret }, typeof JSON.parse(secret));
         const options = {
             args: [secret, req.body.data, req.body.bf]
         }
-        console.log('\n\n',JSON.stringify(options), '\n\n')
+        // console.log('\n\n',JSON.stringify(options), '\n\n')
 
         return PythonShell.run('python/createtx.py', options, function (err, resp) {
-            console.log({ resp, err });
-            return res.send(err || resp[0])
+            console.log('Crypto API Return', { resp, err });
+            if (!req.body.data.submit) {
+                console.log('No Submit', typeof resp[0], JSON.parse(resp[0]));
+                const returnarray = JSON.parse(resp[0])
+                const encryptedtx = methods.encryptphrase(returnarray[1], req.body.passhash)
+                let ret = [returnarray[0], encryptedtx]
+                return res.send(JSON.stringify(ret) || err)
+            } else {
+                return res.send((resp && resp[0]) || err)
+            }
         })
-        // return res.send('ok')
     });
 })
 
@@ -286,8 +292,12 @@ app.post('/validate', (req, res) => {
     })
 })
 app.post('/submit', (req, res) => {
+    // pass {tx, bf}
     console.log('submit');
-    return PythonShell.run('python/submit.py', null, function (err, resp) {
+    const options = {
+        args: [req.body.tx, req.body.bf]
+    }
+    return PythonShell.run('python/submit.py', options, function (err, resp) {
         return res.send('ok ' + resp);
     })
 })
