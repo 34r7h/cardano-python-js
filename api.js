@@ -223,31 +223,7 @@ app.get('/decrypt', (req, res) => {
     return res.send(dec);
 })
 app.post('/mint', (req, res) => {
-    console.log({ minting: req.query });
-    const fs = require('fs');
-    let secret
-    fs.readFile('./keys/encryptedkeys.secret', 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        if (!req.query.password) {
-            req.query.password = 'swordfish'
-        }
-
-        secret = methods.decryptphrase(data, req.query.password)
-        console.log({ data, secret }, typeof JSON.parse(secret));
-        const options = {
-            args: [req.query.address, req.query.data, req.query.bf]
-        }
-        return PythonShell.run('python/mint.py', options, function (err, resp) {
-            console.log({ resp });
-            return res.send(resp);
-        })
-    });
-})
-app.post('/createtx', (req, res) => {
-    console.log('creating tx', JSON.stringify(req.body));
+    console.log({ minting: req.body });
     const fs = require('fs');
     let secret
     var hash = crypto.SHA256(req.body.passhash + req.body.key);
@@ -263,10 +239,56 @@ app.post('/createtx', (req, res) => {
             args: [secret, req.body.data, req.body.bf]
         }
         // console.log('\n\n',JSON.stringify(options), '\n\n')
+        let bodydata = JSON.parse(req.body.data)
+        return PythonShell.run('python/mint.py', options, function (err, resp) {
+            console.log(typeof bodydata.submit, bodydata.submit,'Crypto API Return', { resp, err });
+            return res.send((resp && resp[0]) || err)
+        })
+    });
+    
+    
+    
+    // fs.readFile('./keys/encryptedkeys.secret', 'utf8', (err, data) => {
+    //     if (err) {
+    //         console.error(err);
+    //         return;
+    //     }
+    //     if (!req.query.password) {
+    //         req.query.password = 'swordfish'
+    //     }
 
+    //     secret = methods.decryptphrase(data, req.query.password)
+    //     console.log({ data, secret }, typeof JSON.parse(secret));
+    //     const options = {
+    //         args: [req.query.address, req.query.data, req.query.bf]
+    //     }
+    //     return PythonShell.run('python/mint.py', options, function (err, resp) {
+    //         console.log({ resp });
+    //         return res.send(resp);
+    //     })
+    // });
+})
+app.post('/createtx', (req, res) => {
+    console.log('creating tx', req.body);
+    const fs = require('fs');
+    let secret
+    var hash = crypto.SHA256(req.body.passhash + req.body.key);
+    fs.readFile(`./keys/${hash + ''}.secret`, 'utf8', (err, data) => {
+        // console.log({ data, err });
+        if (err) {
+            console.error(err);
+            return;
+        }
+        secret = methods.decryptphrase(data, req.body.passhash + req.body.key)
+        // console.log({ secret }, typeof JSON.parse(secret));
+        const options = {
+            args: [secret, req.body.data, req.body.bf]
+        }
+        console.log('\n\n',JSON.stringify(options), '\n\n')
+        let bodydata = JSON.parse(req.body.data)
         return PythonShell.run('python/createtx.py', options, function (err, resp) {
-            console.log('Crypto API Return', { resp, err });
-            if (!req.body.data.submit) {
+            console.log(typeof bodydata.submit, bodydata.submit,'Crypto API Return', { resp, err });
+            if (!bodydata.submit) {
                 console.log('No Submit', typeof resp[0], JSON.parse(resp[0]));
                 const returnarray = JSON.parse(resp[0])
                 const encryptedtx = methods.encryptphrase(returnarray[1], req.body.passhash)
@@ -292,13 +314,16 @@ app.post('/validate', (req, res) => {
     })
 })
 app.post('/submit', (req, res) => {
-    // pass {tx, bf}
+    // {cbor, bf, passhash}
     console.log('submit');
+    tx = methods.decryptphrase(req.body.cbor, req.body.passhash)
     const options = {
-        args: [req.body.tx, req.body.bf]
+        args: [tx, req.body.bf]
     }
+    console.log({options});
     return PythonShell.run('python/submit.py', options, function (err, resp) {
-        return res.send('ok ' + resp);
+        console.log({resp});
+        return res.send(resp);
     })
 })
 http.createServer(app).listen(port, () => {

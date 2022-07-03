@@ -1,13 +1,16 @@
 
 # TODO encrypt signed tx to save on user's address
 # Args = [signed_tx, blockfrost_key]
-from pycardano import BlockFrostChainContext, Network
+from pycardano import *
 import sys
 
 args = sys.argv[1:]
+# args = [
+# '84a30081825820add282005a1f0266da61f4f5a9834644bf3770117cd158a541fee89d4e6e07510101828258390138b588da53c472197ebab854570cf6e06b9f5ef2beb089fcf05734b79031d66abfa2f989dedbdc9e0c5881144f56ac3168a5e0cb5a337ef91a00326421825839011605c585cca3616526c10e9a16e5ead2ab4c7dc4e5484ec85f73dd06a33a23be6a8a2d68c8a3ed779873b674f8d3c699fc9d2afed8a05aac821a005e2a81a1581ccf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb861a14a6c6f76655f656172746801021a00029781a1008182582086d38b30b6a2b42dd1258f8c7ce3e26096776f898d41f5dbb4c70277fd3bb4ec584063effcd21572e25ec7565e09a8037e343dac379224941b35898097d1028f3fbc5114530cbe0353f39f4055ccdb5d54fa0e7dd7c11ab96d244912b8f2cad8980ff5f6',    'mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza']
 bf = args[1]
 signed_tx = args[0]
 network = Network.MAINNET
 context = BlockFrostChainContext(bf, network)
-context.submit_tx(signed_tx)
-print(id)
+# print(bf, signed_tx, context)
+submit = context.submit_tx(signed_tx)
+print(submit)

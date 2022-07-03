@@ -14,48 +14,49 @@ now = datetime.now()
 if len(sys.argv) > 1:
     ### args = [address, data, blockfrostid]
     args = list(sys.argv[1:])
-    tokenmetadata = json.loads(args[1])
-    tokenmetadata['mintedon'] = now.strftime("%d/%m/%Y %H:%M:%S")
-    
+    tokendata = json.loads(args[1])
+    tokenmetadata = tokendata['metadata']
+    # print(tokenmetadata)
+    tokenmetadata['minted_on'] = now.strftime("%d/%m/%Y %H:%M:%S")
 
 else:
     args = [
         "addr1qxvqw3xawj76533sf8dl4rkm9sn5t4vfzwgtc0mvmcjpmgee8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57assqu5h5",
         {
-            "artist": "Glootie",
-            "description": "hello multiverse",
-            "ticker": "",
-            "collection": "XMBL tests",
-            "creator": "Glootie",
+            "artist": "Sharon",
+            "description": "x your eyes",
+            "ticker": "shrn1",
+            "collection": "Sharon Experiments",
+            "creator": "XMBA",
             "discord": "https://discord.gg/446844338538938378",
             "rarity": "Tier 1 (1 of 1)",
             "set": "XMBLs (1 of 1)",
             "twitter": "https://twitter/i34r7h",
-            "copyright": "Copyright 2021 no one ever",
+            "copyright": "Copyright 2022 Sharon",
             "files": [
                 {
                     "mediaType": "image/png",
-                    "name": "Screen Shot 2022-05-15 at 23.00.50.png",
-                    "src": "ipfs://QmXTEAAeY9Ruhxokc2r3LsNqmGn57hntqe6ab9PMiNtyUv",
+                    "name": "screen_shot_2022-06-28_at_21.49.43.png",
+                    "src": "ipfs://QmYD4xHe3noykXihefWEKPzv6NyTeMf6Mngdr7pPVenh8u",
                 }
             ],
-            "xymboltoken": "c97280de5e7d565d84b913cf26d0b262a15f48b044ef37cc6a826267b0c1da73",
-            "imagehash": "b3be95302ad2ac7769b17ff8c80bd1eee49b9bd28b21ba3a11d9ae4a9513a870",
-            "ipfs": "QmXTEAAeY9Ruhxokc2r3LsNqmGn57hntqe6ab9PMiNtyUv",
-            "filehash": "1a8d3562152341587b77507db8e4a22a37ade0454b16abdff70053a0cedde9fb",
-            "id": "c97280de5e7d565d84b913cf26d0b262a15f48b044ef37cc6a826267b0c1da73",
-            "image": "ipfs://QmXTEAAeY9Ruhxokc2r3LsNqmGn57hntqe6ab9PMiNtyUv",
+            "xymboltoken": "c995c28304094b787bdefaa0803ead590286b3d6be23ff9c3c8adde8ff007ce3",
+            "imagehash": "81d0f728b9c482336654193cdd29cdb25d8c141ddca70ec606ac513b34a8b76b",
+            "ipfs": "QmYD4xHe3noykXihefWEKPzv6NyTeMf6Mngdr7pPVenh8u",
+            "filehash": "263b32bf6bd33e9c53787c12aefdbbbf3dd92345e48fe3367d68edfb40166bff",
+            "id": "c995c28304094b787bdefaa0803ead590286b3d6be23ff9c3c8adde8ff007ce3",
+            "image": "ipfs://QmYD4xHe3noykXihefWEKPzv6NyTeMf6Mngdr7pPVenh8u",
             "mediaType": "image/png",
-            "name": "Testing " + now.strftime("%d/%m/%Y %H:%M:%S"),
+            "name": "x your eyes",
             "supply": "1",
-            "size": "24218",
+            "size": "284212",
         },
         "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
     ]
     # print("no args", sys.argv)
     tokenmetadata = args[1]
 
-sendaddress = Address.from_primitive(args[0])
+# sendaddress = Address.from_primitive(args[0])
 bf = args[2]
 
 # Copy your BlockFrost project ID below. Go to https://blockfrost.io/ for more information.
@@ -96,19 +97,35 @@ def load_or_create_key_pair(base_dir, base_name):
         vkey = key_pair.verification_key
     return skey, vkey
 
+secret = args[0]
+# data = args[1]
 
-pkey = PaymentVerificationKey.load("testpayment.vkey")
-skey = PaymentSigningKey.load("testpayment.skey")
-spkey = PaymentVerificationKey.load("teststake.vkey")
+jsonsecret = json.loads(secret)
+# jsondata = json.loads(data)
+
+pkey = jsonsecret["payment"]["signing"]["cborHex"]
+vkey = jsonsecret["payment"]["verification"]["cborHex"]
+sk = PaymentSigningKey.from_cbor(pkey)
+vk = PaymentVerificationKey.from_signing_key(sk)
+address = Address.from_primitive(tokendata["address"])
+
+
+# pkey = PaymentVerificationKey.load("testpayment.vkey")
+# skey = PaymentSigningKey.load("testpayment.skey")
+
+# spkey = jsonsecret["stake"]["verification"]["cborHex"]
+
 # print('payment keys', pkey, skey)
 
-address = Address(
-    payment_part=pkey.hash(), staking_part=spkey.hash(), network=Network.MAINNET
-)
+# address = Address(
+#     payment_part=pkey.hash(), staking_part=spkey.hash(), network=Network.MAINNET
+# )
 # print(address)
 
 # # Payment address. Send some ADA (~5 ADA is enough) to this address, so we can pay the minting fee later.
+
 # payment_skey, payment_vkey = load_or_create_key_pair(key_dir, "payment")
+
 # address = Address(payment_vkey.hash(), network=NETWORK)
 # print(address)
 
@@ -135,10 +152,14 @@ with open(root / "policy.id", "a+") as f:
 """Define NFT"""
 # Create an asset container
 my_asset = Asset()
+# print('tokenmetadata', type(tokenmetadata), tokenmetadata['name'])
+# print('tokenmetadata', tokenmetadata['name'])
 # Create names for our assets
 nft1 = AssetName(bytes(tokenmetadata['name'], 'utf-8'))
 # nft2 = AssetName(b"MY_NFT_2")
 # Put assets into the asset container with a quantity of 1
+
+# TODO add quantity from xmba for currencies
 my_asset[nft1] = 1
 # my_asset[nft2] = 1
 
@@ -146,6 +167,7 @@ my_asset[nft1] = 1
 my_nft = MultiAsset()
 # Put assets into MultiAsset container. In this example, we only have one policy.
 # However, MultiAsset container can hold multiple different policies.
+
 my_nft[policy_id] = my_asset
 
 # Create the final native script that will be attached to the transaction
@@ -154,34 +176,33 @@ native_scripts = [policy]
 """Define NFT (Alternative)"""
 # The nft definition above is somewhat verbose.
 # We can also directly create native assets from python primitives.
+name = tokenmetadata['name']
 my_nft_alternative = MultiAsset.from_primitive(
     {
         policy_id.payload: {  # Use policy ID created from above. We can't use policy_id here because policy_id's type  # is ScriptHash, which is not a primitive type. Instead, we use policy_id.payload (bytes)
-            bytes(tokenmetadata['name'], 'utf-8'): 1,  # Name of our NFT1  # Quantity of this NFT
+            bytes(name, 'utf-8'): 1,  # Name of our NFT1  # Quantity of this NFT
             # b"MY_NFT_2": 1,  # Name of our NFT2  # Quantity of this NFT
         }
     }
 )
 
 # my_nft and my_nft_alternative are equivalent
-assert my_nft == my_nft_alternative
+#  assert my_nft == my_nft_alternative
 
 """Create metadata"""
 # We need to create a metadata for our NFTs, so they could be displayed correctly by blockchain explorer
-metadata = {
-    721: {  # 721 refers to the metadata label registered for NFT standard here:
-        # https://github.com/cardano-foundation/CIPs/blob/master/CIP-0010/registry.json#L14-L17
-        policy_id.payload.hex(): {
-            tokenmetadata['name']: tokenmetadata,
-            # "MY_NFT_2": {
-            #     "description": "This is my second NFT thanks to PyCardano",
-            #     "name": "PyCardano NFT example token 2",
-            #     "id": 2,
-            #     "image": "ipfs://QmRhTTbUrPYEw3mJGGhQqQST9k86v1DPBiTTWJGKDJsVFw",
-            # },
-        }
-    }
-}
+policyid = policy_id.payload.hex()
+metadata = {721:{}}
+metadata[721][policyid] = {}
+metadata[721][policyid][name] = tokenmetadata
+# {
+#     721: {  # 721 refers to the metadata label registered for NFT standard here:
+#         # https://github.com/cardano-foundation/CIPs/blob/master/CIP-0010/registry.json#L14-L17
+#         [policyid]: {
+#             [name]: tokenmetadata
+#         }
+#     }
+# }
 
 # Place metadata in AuxiliaryData, the format acceptable by a transaction.
 auxiliary_data = AuxiliaryData(AlonzoMetadata(metadata=Metadata(metadata)))
@@ -210,16 +231,16 @@ builder.auxiliary_data = auxiliary_data
 min_val = min_lovelace(Value(0, my_nft), chain_context)
 
 # Send the NFT to our own address
-builder.add_output(TransactionOutput(sendaddress, Value(min_val, my_nft)))
+builder.add_output(TransactionOutput(address, Value(min_val, my_nft)))
 # print('builder', builder)
 # Create final signed transaction
-signed_tx = builder.build_and_sign([skey, policy_skey], change_address=address)
-
+signed_tx = builder.build_and_sign([sk, policy_skey], change_address=address)
+tx_id = str(signed_tx.id)
 # print("############### Transaction created ###############")
 # print(signed_tx)
 # print(signed_tx.to_cbor())
 
 # Submit signed transaction to the network
-print("############### Submitting transaction ###############")
+# print("############### Submitting transaction ###############")
 chain_context.submit_tx(signed_tx.to_cbor())
-print(policy_id, sendaddress)
+print(policy_id,tx_id )
