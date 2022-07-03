@@ -5,12 +5,17 @@ import sys
 from dataclasses import dataclass, field
 from typing import Dict, List
 
+# todo create log module for import to other files
+def log(l, d, s):
+    dtype = type(d)
+    da = json.dumps(d, indent=2, sort_keys=t) if isinstance(d, dict) else d
+    if s:
+        print(f"\n\n\n{'─' * 25}\n{l}: {dtype}\n{'─' * 15}\n", da)
+t = True
+f = False
+
 minfee = 200000
-args = sys.argv[1:] or [
-    '{"payment":{"signing":{"type":"PaymentSigningKeyShelley_ed25519","description":"PaymentSigningKeyShelley_ed25519","cborHex":"5820f399012098e89f8b0a5eee188258a845a1afdd393ead76084a084345bddedd83"},"verification":{"type":"PaymentVerificationKeyShelley_ed25519","description":"PaymentVerificationKeyShelley_ed25519","cborHex":"5820c09460a12bab651cb3de0dc289727aeaa08b16942a802900cc5bad0b3cdd64ab"}},"stake":{"signing":{"type":"StakeSigningKeyShelley_ed25519","description":"StakeSigningKeyShelley_ed25519","cborHex":"58202afb6830043e799267e398f90cc0671b28c33060d48d003c4e6a46f60ae64c02"},"verification":{"type":"StakeVerificationKeyShelley_ed25519","description":"StakeVerificationKeyShelley_ed25519","cborHex":"5820ca222f8d530727b20238bab18ab1b1e12018fde41f05ef91944fede95596dc4b"}}}',
-    '{"address":"addr1q872eujv4xcuckfarjklttdfep7224gjt7wrxkpu8ve3v6g4x2yx743payyucr327fz0dkdwkj9yc8gemtctgmzpjd8qcdw8qr","outputs":[               {"address":"addr1qxx7lc2kyrjp4qf3gkpezp24ugu35em2f5h05apejzzy73c7yf794gk9yzhngdse36rae52c7a6rv5seku25cd8ntves7f5fe4","tokens":[{"unit":"lovelace", "quantity":"3000000"},{"unit":"c4d5ae259e40eb7830df9de67b0a6a536b7e3ed645de2a13eedc7ece7820796f75722065796573","quantity":"1","index":"1","name":"x your eyes"}]},{"address":"addr1qytqt3v9ej3kzefxcy8f59h9atf2knracnj5snkgtaea6p4r8g3mu652945v3gldw7v88dn5lrfudx0un540ak9qt2kqhfjl0d","tokens":[{"unit":"lovelace", "quantity":"1200000"}]}],"submit":"true"}',
-    "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
-]
+args = sys.argv[1:] or ["{\"payment\":{\"signing\":{\"type\":\"PaymentSigningKeyShelley_ed25519\",\"description\":\"PaymentSigningKeyShelley_ed25519\",\"cborHex\":\"5820d62379993894309c41ff5179df7db1431cf5b723bbee3cd77de9258df052ea95\"},\"verification\":{\"type\":\"PaymentVerificationKeyShelley_ed25519\",\"description\":\"PaymentVerificationKeyShelley_ed25519\",\"cborHex\":\"58206d0c8ef76c29b1bddc863003d07e99865831a96ad2c4db3a02e60bb417e6521c\"}},\"stake\":{\"signing\":{\"type\":\"StakeSigningKeyShelley_ed25519\",\"description\":\"StakeSigningKeyShelley_ed25519\",\"cborHex\":\"5820e417df710ab747ca7e072c52c19104921cc3e0f487e40eae1d88d5df770b54eb\"},\"verification\":{\"type\":\"StakeVerificationKeyShelley_ed25519\",\"description\":\"StakeVerificationKeyShelley_ed25519\",\"cborHex\":\"582039827ab0c96922a7f7e685beee4ca839302f4fe946fb38d3466b4140f9985b95\"}}}","{\"address\":\"addr1qxeky720e3yx5vfszs4ssk6tdlnhvdnngevr0qgu6q39xw0z7wxgc8snm7m5ce69fdtkuddmugwl6z2zev29f85rk2wq0mmf0q\",\"outputs\":[{\"address\":\"addr1qytqt3v9ej3kzefxcy8f59h9atf2knracnj5snkgtaea6p4r8g3mu652945v3gldw7v88dn5lrfudx0un540ak9qt2kqhfjl0d\",\"tokens\":[{\"unit\":\"92952ee27042c68cd5a807d686dd75010115dfe6feab2c898f0fde1458796d626f6c\",\"quantity\":\"27\",\"index\":\"2\"}]}],\"submit\":\"true\"}","mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza"]
 
 secret = args[0]
 data = args[1]
@@ -33,16 +38,15 @@ tokentotals = {}
 outputbyaddress = {}
 outputlist = []
 leftovers = {}
+minlovelaceset = False
 
 for output in jsondata["outputs"]:
+    log('output', output, t)
     prepmulti = {}
-    print(
-        f"\n\n\n{'─' * 25}\nOutput:\n{'─' * 15}\n",
-        json.dumps(output, indent=2, sort_keys=True),
-    )
-
     outputbyaddress[output["address"]] = {}
     if len(output["tokens"]) == 1 and output["tokens"][0]["unit"] == "lovelace":
+        log('Only lovelace', '', t)
+        minlovelaceset = t
         outputlist.append(
             {
                 "address": output["address"],
@@ -50,18 +54,15 @@ for output in jsondata["outputs"]:
             }
         )
     for token in output["tokens"]:
-        print(
-            f"\n\n\n{'─' * 25}\nToken:\n{'─' * 15}\n",
-            json.dumps(token, indent=2, sort_keys=True),
-        )
-
+        log('Token', token, t)
         if not token["unit"] in tokentotals:
-            print("no token")
+            log('No token', '', t)
             if token["unit"] == "lovelace":
                 tokentotals[token["unit"]] = {
                     "unit": token["unit"],
                     "quantity": int(token["quantity"]),
                 }
+                minlovelaceset = t
             else:
                 tokentotals[token["unit"][0:56]] = {
                     "unit": token["unit"],
@@ -71,83 +72,74 @@ for output in jsondata["outputs"]:
         else:
             if token["unit"] == "lovelace":
                 tokentotals[token["unit"]]["quantity"] += int(token["quantity"])
+                minlovelaceset = t
             else:
                 tokentotals[token["unit"][0:56]]["quantity"] += int(token["quantity"])
-        if len(output["tokens"]) > 1:
-            prepmulti[token["unit"]] = int(token["quantity"])
+        # if len(output["tokens"]) > 1:
+        prepmulti[token["unit"]] = int(token["quantity"])
     if len(prepmulti.keys()) > 0:
-        print(
-            f"\n\n\n{'─' * 25}\nPrepmulti:\n{'─' * 15}\n",
-            json.dumps(prepmulti, indent=2, sort_keys=True),
-        )
+        log('Prepmulti', prepmulti, t)
         outputlist.append({"address": output["address"], "tokens": prepmulti})
+log('outputlist', outputlist, t)
 
-print(
-    f"\n\n\n{'─' * 25}\noutputlist:\n{'─' * 15}\n",
-    json.dumps(outputlist, indent=2, sort_keys=True),
-)
 utxos = context.utxos(str(address))
 
 sufficientadatxs = []
 insufficientadatxs = []
 inputsetup = {}
 for utxoi, utxo in enumerate(utxos):
-    print(f"\n\n\n{'─' * 25}\nutxo:{utxoi}\n{'─' * 15}\n", utxo)
-
+    log(f'utxo {utxoi}', utxo, t)
+    if not 'lovelace' in tokentotals:
+        tokentotals["lovelace"] = {
+            'unit': 'lovelace',
+            'quantity': 0
+        }
     if utxo.output.amount.coin >= (tokentotals["lovelace"]["quantity"] + minfee):
-        print(
-            f"\n\n\n{'─' * 25}\namount sufficient:\n{'─' * 15}\n",
-            utxo.output.amount.coin,
-        )
+        log('amount sufficient', utxo.output.amount.coin, t)
+
         sufficientadatxs.append({str(utxo.output.amount.coin): utxoi})
         sufficientadatxs = sorted(sufficientadatxs, key=lambda d: list(d.keys()))
     else:
-        print(
-            f"\n\n\n{'─' * 25}\namount insufficient:\n{'─' * 15}\n",
-            utxo.output.amount.coin,
-        )
+        log('amount insufficient', utxo.output.amount.coin, t)
+
         insufficientadatxs.append({str(utxo.output.amount.coin): utxoi})
         insufficientadatxs = sorted(insufficientadatxs, key=lambda d: list(d.keys()))
     if len(utxo.output.amount.multi_asset.keys()) > 0:
-        print(
-            f"\n\n\n{'─' * 25}\nmulti_asset:\n{'─' * 15}\n",
-            list(utxo.output.amount.multi_asset.to_primitive().keys())[0].hex(),
-            utxo.output.amount.multi_asset.to_primitive()[
-                list(utxo.output.amount.multi_asset.to_primitive().keys())[0]
-            ],
-        )
+        for tokenpolicy in utxo.output.amount.multi_asset.keys():
+            log('tokenpolicy', tokenpolicy, t)
+            log(
+                'multi_asset', 
+                [
+                    list(utxo.output.amount.multi_asset[tokenpolicy].to_primitive().keys())[0].hex(),
+                    utxo.output.amount.multi_asset[tokenpolicy].to_primitive()[
+                    list(utxo.output.amount.multi_asset[tokenpolicy].to_primitive().keys())[0]
+                ]], t)
+            log('policy fix', list(utxo.output.amount.multi_asset[tokenpolicy].to_primitive().keys())[0].hex(), t)
 
-        policykey = list(utxo.output.amount.multi_asset.to_primitive().keys())[0].hex()
-        inputsetup[policykey] = {
-            "txid": str(utxo.input.transaction_id),
-            "txindex": utxo.input.index,
-            "tokenqty": utxo.output.amount.multi_asset.to_primitive()[
-                list(utxo.output.amount.multi_asset.to_primitive().keys())[0]
-            ][bytes.fromhex(tokentotals[policykey]["name"])],
-            "tokenname": bytes.fromhex(tokentotals[policykey]["name"]),
-        }
+            policykey = str(tokenpolicy)
+            log('policykey from utxo', policykey, t)
+            # log('policykey in  tokentotals', [policykey, tokentotals], t)
 
-print(
-    f"\n\n\n{'─' * 25}\ntokentotals:\n{'─' * 15}\n",
-    json.dumps(tokentotals, indent=2, sort_keys=True),
-)
-print(f"\n\n\n{'─' * 25}\ninputsetup:\n{'─' * 15}\n", inputsetup)
-
-print("\nsufficientadatxs\n", json.dumps(sufficientadatxs, indent=2, sort_keys=True))
-print(
-    "\ninsufficientadatxs:\n", json.dumps(insufficientadatxs, indent=2, sort_keys=True)
-)
+            if policykey in tokentotals:
+                log('policykey in tokentotals', list(utxo.output.amount.multi_asset[tokenpolicy]), t)
+                inputsetup[policykey] = {
+                    "txid": str(utxo.input.transaction_id),
+                    "txindex": utxo.input.index,
+                    "tokenqty": utxo.output.amount.multi_asset[tokenpolicy].to_primitive()[
+                        list(utxo.output.amount.multi_asset[tokenpolicy].to_primitive().keys())[0]
+                    ]
+                }
+log('tokentotals', tokentotals, t)
+log('inputsetup', inputsetup, t)
+log('sufficientadatxs', sufficientadatxs, t)
+log('insufficientadatxs', insufficientadatxs, t)
 
 if len(sufficientadatxs) > 0:
     utxo = dict(sufficientadatxs[0])
-    print("\nFirst sufficient tx:", utxo)
-    # First sufficient tx: {'5639430': 2}
     utxoamount = list(utxo.keys())[0]
-    print("\nAmount in first sufficient tx:", utxoamount)
-    # Amount in first sufficient tx: 5639430
     utxoi = utxo[utxoamount]
-    print("\nFirst sufficient tx, amount, tx index:\n", utxo, utxoamount, utxoi)
-    # First sufficient tx, amount, tx index: {'5639430': 2} 5639430 2
+    log('First sufficient tx, amount, tx index', [utxo, utxoamount, utxoi], t)
+
     difference = (
         int(utxos[utxoi].output.amount.coin)
         - int(tokentotals["lovelace"]["quantity"])
@@ -160,23 +152,27 @@ if len(sufficientadatxs) > 0:
     }
 else:
     # todo
-    print("\nadd up insufficients\n")
+    log('add up insufficients', '', t)
 
-print("\nDifference:", difference)
+log('difference', difference, t)
 
 txins = []
 
-for tkey in tokentotals.keys():
-    id = inputsetup[tkey]["txid"]
-    index = inputsetup[tkey]["txindex"]
-    txinlist = TransactionInput.from_primitive([id, index])
-    txins.append(txinlist)
+log('difference', difference, t)
+log('tokentotals, inputsetup', [tokentotals, inputsetup], t)
 
-print(f"\n\n\n{'─' * 25}\ntxins:\n{'─' * 15}\n", txins)
+for tkey in tokentotals.keys():
+    log('tkey', tkey, t)
+    if not tkey == 'lovelace' and tkey in inputsetup:
+        id = inputsetup[tkey]["txid"]
+        index = inputsetup[tkey]["txindex"]
+        # log('utxo with token', utxos[index], t)
+        txinlist = TransactionInput.from_primitive([id, index])
+        txins.append(txinlist)
+log('txins', txins, t)
 
 addr = address
-
-print("\nAddr:", addr)
+log('addr', addr, t)
 
 txouts = []
 
@@ -191,15 +187,15 @@ for output in outputlist:
             if tokenkey == "lovelace":
                 multi[0] = tokenamount
             else:
-                print(tokenkey)
+                log('tokenkey', tokenkey, t)
                 policy_id = bytes.fromhex(tokenkey[0:56])
                 token_name = bytes.fromhex(tokenkey[56:])
                 multi[1][policy_id] = {token_name: tokenamount}
         txouts.append(TransactionOutput(Address.decode(output["address"]), Value.from_primitive(multi)))
-
-print(f"\n\n\n{'─' * 25}\ntxouts:\n{'─' * 15}\n", txouts)
+log('txouts', txouts, t)
 
 # change
+# TODO tally leftovers of all tokens and send back to sender. Set minlovelaceset = True or figure out where the missing lovelace is.
 txouts.append(TransactionOutput(addr, difference+1379280))
 
 if "metadata" in jsondata:
@@ -210,8 +206,7 @@ if "metadata" in jsondata:
 # TODO add and test metadata
 
 tx_body = TransactionBody(inputs=txins, outputs=txouts, fee=minfee)
-
-print(f"\n\n\n{'─' * 25}\ntx_body and tx fee:\n{'─' * 15}\n", tx_body, tx_body.fee)
+log('tx_body', tx_body, t)
 
 signature = sk.sign(tx_body.hash())
 vk_witnesses = [VerificationKeyWitness(vk, signature)]
@@ -219,7 +214,7 @@ signed_tx = Transaction(tx_body, TransactionWitnessSet(vkey_witnesses=vk_witness
 
 tx_id = str(signed_tx.id)
 
-print("\nSigned tx, tx id:\n", signed_tx, tx_id)
-print("############### Submitting transaction ###############")
+log('signed_tx and id', [signed_tx, tx_id], t)
+log('############### Submitting transaction ###############', '', t)
 
 context.submit_tx(signed_tx.to_cbor())
