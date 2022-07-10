@@ -4,7 +4,6 @@ import sys
 from dataclasses import dataclass, field
 from typing import Dict, List
 
-# todo create log module for import to other files
 t = True
 f = False
 dev = f
@@ -51,34 +50,20 @@ utxos_from_bf = context.utxos(str(address))
 # TODO: allow multiple inputs
 
 # Instantiate structs and values
-alltokens = {}
 balance = {
     "in": {"lovelace": 0},
-    "out": {"lovelace": 0},
-    "dif": {"lovelace": 0},
-    "by_tx": {},
+    "out": {"lovelace": 0}
 }
-inputsetup = {}
-insufficientadatxs = []
 insufficienttxs = {"lovelace": []}
 insufficient_sorted = {}
-leftovers = {}
 outputbyaddress = {}
-outputlist = []
 minada = 2000000
 minfee = 200000
-minlovelaceset = f
-return_tokens = {}
 sendall = f  # TODO put option on front end
-sufficientadatxs = []
 sufficienttxs = {"lovelace": []}
 sufficient_sorted = {}
 tokens = {}
-tokentotals = {}
 total_tokens_required = {"lovelace": minfee}
-total_tokens_input = {"lovelace": 0}
-total_lovelace_from_inputs = 0
-totals = {"inputs": {}, "outputs": {}}
 tx_inputs = []
 tx_outputs = []
 usedutxos = set()
@@ -89,14 +74,10 @@ def calculate_balance_in(tx_id):
     log(f"Calculating return from utxo: {tx_id}", utxos[tx_id], t)
     if not tx_id in usedutxos:
         balance["in"]["lovelace"] += utxos[tx_id]["lovelace"]
-        if not tx_id in balance["by_tx"]:
-            balance["by_tx"][tx_id] = {}
-        balance["by_tx"][tx_id]["lovelace"] = utxos[tx_id]["lovelace"]
         for key, token in utxos[tx_id]["tokens"].items():
             if not key in balance["in"]:
                 balance["in"][key] = 0
             balance["in"][key] += token["amount"]
-            balance["by_tx"][tx_id][key] = token["amount"]
         usedutxos.add(tx_id)
 
 def calculate_return():
@@ -119,59 +100,10 @@ def calculate_return():
             }
     log('return_leftovers', return_leftovers, t)
     tx_outputs.append(
-        TransactionOutput(Address.decode(address), Value.from_primitive(return_leftovers))
+        TransactionOutput(address, Value.from_primitive(return_leftovers))
     )
-    # if not tx_id in usedutxos:
-    #     total_tokens_input["lovelace"] += utxos[tx_id]["lovelace"]
-    #     for token_key, available_token in utxos[tx_id]["tokens"].items():
-    #         # if not tx_id in usedutxos:
-    #         #     total_tokens_input['lovelace'] += utxos[tx_id]['lovelace']
-
-    #         log(
-    #             "available token: " + token_key + available_token["hex_name"],
-    #             available_token,
-    #             f,
-    #         )
-    #         # if there's no token input set, set input to available amount
-    #         if not token_key in total_tokens_input:
-    #             total_tokens_input[token_key] = available_token["amount"]
-    #         else:  # a token input is already set so add to total
-    #             total_tokens_input[token_key] += available_token["amount"]
-    #         # if the token is not required for the tx, return them all
-    #         if not token_key + available_token["hex_name"] in total_tokens_required:
-    #             log("return token: " + token_key, available_token, f)
-    #             if token_key in return_tokens:  # return exists, add available amount
-    #                 return_tokens[token_key] += available_token["amount"]
-    #             else:  # return !exists, set available amount
-    #                 return_tokens[token_key] = available_token["amount"]
-    #         else:  # token is required, split difference
-    #             log("return token if still a balance: " + token_key, available_token, f)
-    #             # if the available amount is greater than required
-    #             if (
-    #                 available_token["amount"]
-    #                 > total_tokens_required[token_key + available_token["hex_name"]]
-    #             ):
-    #                 # token already set in return, add difference - required
-    #                 if token_key in return_tokens:
-    #                     return_tokens[token_key] += (
-    #                         available_token["amount"]
-    #                         - total_tokens_required[
-    #                             token_key + available_token["hex_name"]
-    #                         ]
-    #                     )
-    #                 else:
-    #                     return_tokens[token_key] = (
-    #                         available_token["amount"]
-    #                         - total_tokens_required[
-    #                             token_key + available_token["hex_name"]
-    #                         ]
-    #                     )
-    #     usedutxos.add(tx_id)
-    # # total_tokens_input
-
 
 if not sendall:
-    return_tokens["lovelace"] = minada
     total_tokens_required["lovelace"] = minfee
 
 for output in jsondata["outputs"]:  # Get outputs from api request
@@ -239,8 +171,6 @@ for utxoindex, utxo in enumerate(utxos_from_bf):
                         )
                 log('TOKEN utxo: ' + tx_id, token, t)
 
-# Create Inputs (TransactionInput.from_primitive([id, index]))
-# Calculate return change
 log("total_tokens_required", total_tokens_required, f)
 log("utxos", utxos, f)
 for token, amount in total_tokens_required.items():
@@ -254,11 +184,7 @@ for token, amount in total_tokens_required.items():
             key = list(sufficient_sorted[token][0].keys())[0]
             tx_id = sufficient_sorted[token][0][key]
             log("sufficient_sorted[token][0]", tx_id, f)
-            # return_tokens[token] = target - int(amount)
             if not tx_id in usedutxos:
-                totals["inputs"][tx_id] = {
-                    token: list(sufficient_sorted[token][0].keys())[0]
-                }
                 tx_inputs.append(
                     TransactionInput.from_primitive([tx_id, utxos[tx_id]["index"]])
                 )
@@ -276,7 +202,6 @@ for token, amount in total_tokens_required.items():
             partial_id = partial_tuple[1]
             target += int(partial_amount)
             if not partial_id in usedutxos:
-                totals["inputs"][partial_id] = {token: partial_tuple[0]}
                 tx_inputs.append(
                     TransactionInput.from_primitive(
                         [partial_id, utxos[partial_id]["index"]]
@@ -288,18 +213,14 @@ for token, amount in total_tokens_required.items():
                     t,
                 )
             calculate_balance_in(partial_id)
-            #   total_tokens_input['lovelace'] += utxos[tx_id]['lovelace']
             log("target", target, f)
             if target > int(amount):
                 break
-# return_tokens["lovelace"] = (
-#     total_tokens_input["lovelace"] - total_tokens_required["lovelace"]
-# )
-# outputbyaddress[str(address)] = return_tokens
+
 log("outputbyaddress", outputbyaddress, t)
 log("tokens", tokens, f)
-for address, output in outputbyaddress.items():
-    log(f"Output: {address}", output, t)
+for output_address, output in outputbyaddress.items():
+    log(f"Output: {output_address}", output, t)
     if len(output.keys()) > 1:
         multi = {}
         for policy_id, amount in output.items():
@@ -320,12 +241,9 @@ for address, output in outputbyaddress.items():
                 log(policy_id, output["lovelace"], t)
 
         if int(output["lovelace"]) >= minada:
-            # if not "lovelace" in balance["out"]:
-            #     balance["out"]["lovelace"] = 0
-            # balance["out"]["lovelace"] += int(amount)
             tx_outputs.append(
                 TransactionOutput(
-                    Address.decode(address),
+                    Address.decode(output_address),
                     Value.from_primitive([int(output["lovelace"]), multi]),
                 )
             )
@@ -336,28 +254,20 @@ for address, output in outputbyaddress.items():
             balance["out"]["lovelace"] += int(output["lovelace"])
             tx_outputs.append(
                 TransactionOutput(
-                    Address.decode(address),
+                    Address.decode(output_address),
                     Value.from_primitive([int(output["lovelace"])]),
                 )
             )
-log('Balance', balance, t)
 calculate_return()
-# for token, amount in balance["in"].items():
-#     if not token in balance["out"]:
-#         log("Error: Token not in!", token, t)
-#     balance["dif"][token] = amount - balance["out"][token]
 
 log("utxos_from_bf", utxos_from_bf, f)
 log("utxos", utxos, f)
 log("outputbyaddress", outputbyaddress, t)
 log("total_tokens_required", total_tokens_required, t)
-log("total_tokens_input", total_tokens_input, t)
 log("sufficienttxs", sufficienttxs, f)
 log("insufficienttxs", insufficienttxs, f)
 log("usedutxos", usedutxos, t)
-log("return_tokens", return_tokens, t)
 log("tokens", tokens, t)
-log("totals", totals, t)
 log("tx_inputs", tx_inputs, t)
 log("tx_outputs", tx_outputs, t)
 log("balance", balance, t)
@@ -369,21 +279,17 @@ if "metadata" in jsondata:
 
 tx_body = TransactionBody(inputs=tx_inputs, outputs=tx_outputs, fee=minfee)
 log("tx_body", tx_body, f)
-
 signature = sk.sign(tx_body.hash())
 vk_witnesses = [VerificationKeyWitness(vk, signature)]
 signed_tx = Transaction(tx_body, TransactionWitnessSet(vkey_witnesses=vk_witnesses))
-
 tx_id = str(signed_tx.id)
 
 log("signed_tx and id", [signed_tx, tx_id], f)
 log("############### Submitting transaction ###############", "", t)
-
 if jsondata["submit"] == "true":
     context.submit_tx(signed_tx.to_cbor())
     if not dev:
         print(tx_id)
 else:
-    # print(builder._fee)
     if not dev:
         print(json.dumps([tx_id, signed_tx.to_cbor()]))
