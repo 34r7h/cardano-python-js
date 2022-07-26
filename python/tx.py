@@ -7,11 +7,9 @@ from typing import Dict, List
 
 t = True
 f = False
-dev = t
+dev = f
 
-example = [
-    "{\"payment\":{\"signing\":{\"type\":\"PaymentSigningKeyShelley_ed25519\",\"description\":\"PaymentSigningKeyShelley_ed25519\",\"cborHex\":\"5820ff0c5d89ef4aa21e018e232bb4d10d2d3889686cc9504106125f167e2acae425\"},\"verification\":{\"type\":\"PaymentVerificationKeyShelley_ed25519\",\"description\":\"PaymentVerificationKeyShelley_ed25519\",\"cborHex\":\"582070d34fe9dcd5c2acc3a50efe5104ce67f6591c7f740bbe540f776796a5f609fc\"}},\"stake\":{\"signing\":{\"type\":\"StakeSigningKeyShelley_ed25519\",\"description\":\"StakeSigningKeyShelley_ed25519\",\"cborHex\":\"58205904f20aa8bea7cbee7f358b5b46b0b7a27d7e8f005b50e1f656769b0982b80d\"},\"verification\":{\"type\":\"StakeVerificationKeyShelley_ed25519\",\"description\":\"StakeVerificationKeyShelley_ed25519\",\"cborHex\":\"58204f18c064beb2ed113aaa5b0258a4373f45a19321a5be2d27352a528279670600\"}}}","{\"address\":\"addr1qxftfc2s95ss6uz242vxzlw3uu6njuzdp6gldjqfjyzyz6hl0zvkw9l9v69763fl3day46p9lzt2vr66s937emalexeqljy59n\",\"outputs\":[{\"address\":\"addr1qy0zfl40x40z598wty6x0nk5ghete05jmtgttuq6fal7ca6q3al32ae3aftkng2h34dl9hdckm93my7dfkzw7n2dse6s8llyrd\",\"tokens\":[{\"unit\":\"lovelace\",\"quantity\":\"10053182\",\"index\":\"0\"},{\"unit\":\"06a7f19a3791276f7740068fa2998abc79b20f0411c9541723318b13736c656570696e675f626561757479\",\"quantity\":\"1\",\"index\":\"1\"},{\"unit\":\"16d657be5b781fd5c7d13d5358c8be7c15509739ae15d5b3b5e6f06a537562736964652050617276617469\",\"quantity\":\"1\",\"index\":\"2\"},{\"unit\":\"4cb85b57144cd8cfd7fc58e14af07ca0db0d31184e37035ad74eb6fe776879206e6f74\",\"quantity\":\"1\",\"index\":\"3\"},{\"unit\":\"581513d0cdb8a1cd3753a5fd4cf9c2931453253aeb5cf252667ee7244147415045706f6f6c62657461\",\"quantity\":\"18000\",\"index\":\"4\"},{\"unit\":\"92952ee27042c68cd5a807d686dd75010115dfe6feab2c898f0fde1458796d626f6c\",\"quantity\":\"9\",\"index\":\"5\"},{\"unit\":\"ae44f6f2bf702326b8b02b5d902458b99c47de929a7d7922eac4d6be58796d626f6c50726f746f7479706531\",\"quantity\":\"2\",\"index\":\"6\"},{\"unit\":\"cf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb8616c6f76655f6561727468\",\"quantity\":\"1\",\"index\":\"7\"},{\"unit\":\"da2bd6118fffc30168a1bc19e288244bc25e49892269aca57753292554616e676f\",\"quantity\":\"1000000\",\"index\":\"8\"},{\"unit\":\"ec2d31189092312fc8aebdf0f2551bc4de9f1e570620be902f15433d61\",\"quantity\":\"1\",\"index\":\"9\"},{\"unit\":\"f6196e5384f1e40723d678fc42e6926f4bb35df08b36e57db17b0254776879206e6f74\",\"quantity\":\"1\",\"index\":\"10\"}]}],\"submit\":\"true\"}","mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza"
-]
+example = []
 args = sys.argv[1:] or example
 
 secret = args[0]
