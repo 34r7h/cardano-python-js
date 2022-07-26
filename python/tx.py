@@ -7,10 +7,10 @@ from typing import Dict, List
 
 t = True
 f = False
-dev = f
+dev = t
 
 example = [
-    "{\"payment\":{\"signing\":{\"type\":\"PaymentSigningKeyShelley_ed25519\",\"description\":\"PaymentSigningKeyShelley_ed25519\",\"cborHex\":\"58202c2066ed218b7c9308526077bcf1e3a0a81a4da99767ce0746093f6e09272e9c\"},\"verification\":{\"type\":\"PaymentVerificationKeyShelley_ed25519\",\"description\":\"PaymentVerificationKeyShelley_ed25519\",\"cborHex\":\"58207533eaba8c8636c0a4bc62aeebbe44a9490aea888aca9ebf5123b768b85790ab\"}},\"stake\":{\"signing\":{\"type\":\"StakeSigningKeyShelley_ed25519\",\"description\":\"StakeSigningKeyShelley_ed25519\",\"cborHex\":\"5820e59e3e2687eb9f77f3c4ab6b08678c0c358b87652e4b7f5a29b4882a17036530\"},\"verification\":{\"type\":\"StakeVerificationKeyShelley_ed25519\",\"description\":\"StakeVerificationKeyShelley_ed25519\",\"cborHex\":\"5820d3028f37465a91da25385e6b28eeaa3fc684bb37c2c245ad0ff943991a4d1f33\"}}}","{\"address\":\"addr1q9nzv2662ey4kkx96makz82q99wwzehs2uzrt9wwyttq723xkkkcpe0xgfzya3g0jzz825fyfzwm7melppsjr3uw72qs7am8ys\",\"outputs\":[{\"address\":\"addr1qxftfc2s95ss6uz242vxzlw3uu6njuzdp6gldjqfjyzyz6hl0zvkw9l9v69763fl3day46p9lzt2vr66s937emalexeqljy59n\",\"tokens\":[{\"index\":\"0\",\"quantity\":\"2651897\",\"unit\":\"lovelace\"},{\"asset\":\"2d93c679676ff59f092b448c942212312267a67eae63f57b4905133177746620636f696e\",\"policy_id\":\"2d93c679676ff59f092b448c942212312267a67eae63f57b49051331\",\"asset_name\":\"77746620636f696e\",\"fingerprint\":\"asset19qcq3zqma4zv3df2hc2fpcuxdzxxacfv7erser\",\"quantity\":\"1\",\"initial_mint_tx_hash\":\"28928ae3fa3c3bdd92ee95e8002548950d7cd62ecd128df38e3049b1032cab1b\",\"mint_or_burn_count\":\"1\",\"onchain_metadata\":{\"name\":\"wtf coin\",\"files\":[{\"src\":\"ipfs://QmWkAiVh7DnNAS4Y8TzYDVVxawtBjQEHde1jfGJKBnBtzY\",\"name\":\"screen_shot_2022-06-28_at_16.53.45.png\",\"mediaType\":\"image/png\"},{\"src\":\"ipfs://QmXXEtathaKw48fC5tCL1Fg44JmJc3QwxR813DvCskR3F1\",\"name\":\"5vwsee.jpeg\",\"mediaType\":\"image/jpeg\"}],\"minted_on\":\"11/07/2022 17:11:39\"},\"metadata\":\"\",\"hexname\":\"wtf coin\",\"unit\":\"2d93c679676ff59f092b448c942212312267a67eae63f57b4905133177746620636f696e\",\"index\":\"1\",\"name\":\"wtf coin\"},{\"asset\":\"581513d0cdb8a1cd3753a5fd4cf9c2931453253aeb5cf252667ee7244147415045706f6f6c62657461\",\"policy_id\":\"581513d0cdb8a1cd3753a5fd4cf9c2931453253aeb5cf252667ee724\",\"asset_name\":\"4147415045706f6f6c62657461\",\"fingerprint\":\"asset1nelpqtqthu6058t0h9nqn4zf08qkqpwzmv9gkg\",\"quantity\":\"18000\",\"initial_mint_tx_hash\":\"e738ed4a68e9946f99ad83fda9bfa7ee51660186bf7a4c8870098d7df98d81df\",\"mint_or_burn_count\":\"1\",\"onchain_metadata\":\"\",\"metadata\":\"\",\"hexname\":\"AGAPEpoolbeta\",\"unit\":\"581513d0cdb8a1cd3753a5fd4cf9c2931453253aeb5cf252667ee7244147415045706f6f6c62657461\",\"index\":\"2\",\"name\":\"AGAPEpoolbeta\"},{\"asset\":\"ae44f6f2bf702326b8b02b5d902458b99c47de929a7d7922eac4d6be58796d626f6c50726f746f7479706531\",\"policy_id\":\"ae44f6f2bf702326b8b02b5d902458b99c47de929a7d7922eac4d6be\",\"asset_name\":\"58796d626f6c50726f746f7479706531\",\"fingerprint\":\"asset1al3r3f2f2xegj7h37sjnr8h7j9mtam0fve2srs\",\"quantity\":\"2\",\"initial_mint_tx_hash\":\"faf5315e64676e36aef7e0f0bd5ef9dad55683784f6ac2857d967db2637ef5a4\",\"mint_or_burn_count\":\"1\",\"onchain_metadata\":\"\",\"metadata\":\"\",\"hexname\":\"XymbolPrototype1\",\"unit\":\"ae44f6f2bf702326b8b02b5d902458b99c47de929a7d7922eac4d6be58796d626f6c50726f746f7479706531\",\"index\":\"3\",\"name\":\"XymbolPrototype1\"},{\"asset\":\"cf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb8616c6f76655f6561727468\",\"policy_id\":\"cf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb861\",\"asset_name\":\"6c6f76655f6561727468\",\"fingerprint\":\"asset15u5dd842ar9w8ykpmf4l738ucpsxxg9hwhggqq\",\"quantity\":\"1\",\"initial_mint_tx_hash\":\"c20e3d7c168a3e894587f1cd91daed316031d8fe139babef34e09737e49d5ef1\",\"mint_or_burn_count\":\"1\",\"onchain_metadata\":{\"name\":\"love_earth\",\"image\":\"ipfs://undefined\",\"id\":\"c94cdd2147898c6bfb65e57fd8b221b7df129c7d3313a8ab03da80fefe069daa\",\"Set\":\"XMBLs (1 of 1)\",\"size\":\"362596\",\"files\":[{\"src\":\"ipfs://undefined\",\"name\":\"Screenshot from 2021-11-10 17-51-42.png\",\"mediaType\":\"image/png\"}],\"Artist\":\"Glootie\",\"Rarity\":\"Tier 1 (1 of 1)\",\"Creator\":\"Glootie\",\"Discord\":\"https://discord.gg/446844338538938378\",\"Twitter\":\"https://twitter/i34r7h\",\"filehash\":\"da26dfec4db1dec654ec1f42b7af1e0de7962d6383fa5639c5c771e0e08c6335\",\"copyright\":\"Copyright 2021 no one ever\",\"imagehash\":\"0bdd37e3284125564902d5a03117942ba0c2290d2f1b270fd533b856a930e2c7\",\"mediaType\":\"image/png\",\"Collection\":\"XMBL tests\",\"xymboltoken\":\"c94cdd2147898c6bfb65e57fd8b221b7df129c7d3313a8ab03da80fefe069daa\"},\"metadata\":\"\",\"hexname\":\"love_earth\",\"unit\":\"cf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb8616c6f76655f6561727468\",\"index\":\"4\",\"name\":\"love_earth\"},{\"asset\":\"da2bd6118fffc30168a1bc19e288244bc25e49892269aca57753292554616e676f\",\"policy_id\":\"da2bd6118fffc30168a1bc19e288244bc25e49892269aca577532925\",\"asset_name\":\"54616e676f\",\"fingerprint\":\"asset1s5cmudfq0fx0xupps2d09s4rt0ae8zxm2nla7m\",\"quantity\":\"1000000\",\"initial_mint_tx_hash\":\"8d858912c0f3949cfc441744ba74ad38ead66a4d9223138ae580d4486de07846\",\"mint_or_burn_count\":\"1\",\"onchain_metadata\":\"\",\"metadata\":\"\",\"hexname\":\"Tango\",\"unit\":\"da2bd6118fffc30168a1bc19e288244bc25e49892269aca57753292554616e676f\",\"index\":\"5\",\"name\":\"Tango\"},{\"asset\":\"ec2d31189092312fc8aebdf0f2551bc4de9f1e570620be902f15433d61\",\"policy_id\":\"ec2d31189092312fc8aebdf0f2551bc4de9f1e570620be902f15433d\",\"asset_name\":\"61\",\"fingerprint\":\"asset1vfgfqwyz7anytq2z3n5qpksg4p49vk74zk0njf\",\"quantity\":\"1\",\"initial_mint_tx_hash\":\"a2065d2947497e0c5342928666fb23ac9df52ae8fd5d80196f9f318411c35259\",\"mint_or_burn_count\":\"1\",\"onchain_metadata\":{\"name\":\"a\",\"minted_on\":\"29/06/2022 18:54:26\"},\"metadata\":\"\",\"hexname\":\"a\",\"unit\":\"ec2d31189092312fc8aebdf0f2551bc4de9f1e570620be902f15433d61\",\"index\":\"6\",\"name\":\"a\"}]}],\"submit\":\"true\"}","mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
+    "{\"payment\":{\"signing\":{\"type\":\"PaymentSigningKeyShelley_ed25519\",\"description\":\"PaymentSigningKeyShelley_ed25519\",\"cborHex\":\"5820ff0c5d89ef4aa21e018e232bb4d10d2d3889686cc9504106125f167e2acae425\"},\"verification\":{\"type\":\"PaymentVerificationKeyShelley_ed25519\",\"description\":\"PaymentVerificationKeyShelley_ed25519\",\"cborHex\":\"582070d34fe9dcd5c2acc3a50efe5104ce67f6591c7f740bbe540f776796a5f609fc\"}},\"stake\":{\"signing\":{\"type\":\"StakeSigningKeyShelley_ed25519\",\"description\":\"StakeSigningKeyShelley_ed25519\",\"cborHex\":\"58205904f20aa8bea7cbee7f358b5b46b0b7a27d7e8f005b50e1f656769b0982b80d\"},\"verification\":{\"type\":\"StakeVerificationKeyShelley_ed25519\",\"description\":\"StakeVerificationKeyShelley_ed25519\",\"cborHex\":\"58204f18c064beb2ed113aaa5b0258a4373f45a19321a5be2d27352a528279670600\"}}}","{\"address\":\"addr1qxftfc2s95ss6uz242vxzlw3uu6njuzdp6gldjqfjyzyz6hl0zvkw9l9v69763fl3day46p9lzt2vr66s937emalexeqljy59n\",\"outputs\":[{\"address\":\"addr1qy0zfl40x40z598wty6x0nk5ghete05jmtgttuq6fal7ca6q3al32ae3aftkng2h34dl9hdckm93my7dfkzw7n2dse6s8llyrd\",\"tokens\":[{\"unit\":\"lovelace\",\"quantity\":\"10053182\",\"index\":\"0\"},{\"unit\":\"06a7f19a3791276f7740068fa2998abc79b20f0411c9541723318b13736c656570696e675f626561757479\",\"quantity\":\"1\",\"index\":\"1\"},{\"unit\":\"16d657be5b781fd5c7d13d5358c8be7c15509739ae15d5b3b5e6f06a537562736964652050617276617469\",\"quantity\":\"1\",\"index\":\"2\"},{\"unit\":\"4cb85b57144cd8cfd7fc58e14af07ca0db0d31184e37035ad74eb6fe776879206e6f74\",\"quantity\":\"1\",\"index\":\"3\"},{\"unit\":\"581513d0cdb8a1cd3753a5fd4cf9c2931453253aeb5cf252667ee7244147415045706f6f6c62657461\",\"quantity\":\"18000\",\"index\":\"4\"},{\"unit\":\"92952ee27042c68cd5a807d686dd75010115dfe6feab2c898f0fde1458796d626f6c\",\"quantity\":\"9\",\"index\":\"5\"},{\"unit\":\"ae44f6f2bf702326b8b02b5d902458b99c47de929a7d7922eac4d6be58796d626f6c50726f746f7479706531\",\"quantity\":\"2\",\"index\":\"6\"},{\"unit\":\"cf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb8616c6f76655f6561727468\",\"quantity\":\"1\",\"index\":\"7\"},{\"unit\":\"da2bd6118fffc30168a1bc19e288244bc25e49892269aca57753292554616e676f\",\"quantity\":\"1000000\",\"index\":\"8\"},{\"unit\":\"ec2d31189092312fc8aebdf0f2551bc4de9f1e570620be902f15433d61\",\"quantity\":\"1\",\"index\":\"9\"},{\"unit\":\"f6196e5384f1e40723d678fc42e6926f4bb35df08b36e57db17b0254776879206e6f74\",\"quantity\":\"1\",\"index\":\"10\"}]}],\"submit\":\"true\"}","mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza"
 ]
 args = sys.argv[1:] or example
 
@@ -51,13 +51,16 @@ class Methods:
             else:
                 print(da)
 
+    def calc_fee(self, tx):
+        return len(str(tx).encode("utf-8"))
+
 
 state = {
     "minada": 2000000,
-    "minfee": 200000,
+    "minfee": 300000,
     "sendall": f,  # TODO put option on front end
     "submit": jsondata["submit"],
-    "required": {"lovelace": 200000},  # default with minfee
+    "required": {"lovelace": 300000},  # default with minfee
     "total_in": {},
     "return": {},
     "tokens": {},
@@ -69,33 +72,6 @@ s = state
 d = jsondata
 m = Methods()
 # iterate through tx output requests
-for output in d["outputs"]:
-    lovelace = 0
-    multi = {}
-    # Set required and prep tx output
-    for token in output["tokens"]:
-        m.l("output token", token, t)
-        # set required
-        if not token["unit"][0:56] in s["required"]:
-            s["required"][token["unit"][0:56]] = int(token["quantity"])
-        else:
-            s["required"][token["unit"][0:56]] += int(token["quantity"])
-        # prepare output
-        if token["unit"] == "lovelace":
-            lovelace = int(token["quantity"])
-        else:
-            # name = bytes.fromhex(token['unit'][57:-1])
-            m.l("name", token["unit"][57:-1], t)
-            multi[bytes.fromhex(token["unit"][0:56])] = {bytes(token['hexname'], 'utf-8'): int(token["quantity"])}
-    # Create tx output
-    s["tx_outputs"].append(
-        TransactionOutput(
-            Address.decode(output["address"]),
-            Value.from_primitive(
-                [lovelace, multi] if len(multi.keys()) > 0 else [lovelace]
-            ),
-        )
-    )
 # Iterate through available utxos, set inputs, set total_in
 for utxo in utxos_from_bf:
     m.l("utxo", utxo, t)
@@ -119,6 +95,37 @@ for utxo in utxos_from_bf:
                 s["total_in"][policy_id] = amount
             else:
                 s["total_in"][policy_id] += amount
+m.l('tokens', s['tokens'], t)
+for output in d["outputs"]:
+    lovelace = 0
+    multi = {}
+    # Set required and prep tx output
+    for token in output["tokens"]:
+        token_policy = token["unit"][0:56]
+        m.l("output token", token, t)
+
+        # set required
+        if not token_policy in s["required"]:
+            s["required"][token_policy] = int(token["quantity"])
+        else:
+            s["required"][token_policy] += int(token["quantity"])
+        # prepare output
+        if token["unit"] == "lovelace":
+            lovelace = int(token["quantity"])
+        else:
+            multi[bytes.fromhex(token_policy)] = {
+                s['tokens'][token_policy]['name']: int(token["quantity"])
+            }
+    # Create tx output
+    s["tx_outputs"].append(
+        TransactionOutput(
+            Address.decode(output["address"]),
+            Value.from_primitive(
+                [lovelace, multi] if len(multi.keys()) > 0 else [lovelace]
+            ),
+        )
+    )
+
 # Find difference of total_in from required
 for token, qty in s["total_in"].items():
     if token in s["required"]:
@@ -147,7 +154,7 @@ if return_lovelace > s["minada"]:
             ),
         )
     )
-for log in ["required", "total_in", "tx_inputs", "tx_outputs"]:
+for log in ["required", "total_in", "tx_inputs", "tx_outputs", "tokens"]:
     m.l(log, s[log], t)
 
 # Metadata
@@ -156,6 +163,22 @@ if "metadata" in jsondata:
         AlonzoMetadata(metadata=Metadata({721: jsondata["metadata"]}))
     )
 # Create Raw Tx
+
+# Subtract minfee
+# total_fee_subtracted = 0
+# for output in s['tx_outputs']:
+#     m.l('tx_output', output, t)
+#     if output.amount.coin - s['minfee'] >= s['minada'] - total_fee_subtracted:
+#         output.amount.coin -= s['minfee']
+#         break
+#     else: 
+#         total_fee_subtracted += output.amount.coin - s['minada']
+#         output.amount.coin = s['minada']
+#         if total_fee_subtracted >= s['minfee']:
+#             output.amount.coin += total_fee_subtracted - s['minfee']
+#             break
+#     m.l('total_fee_subtracted', total_fee_subtracted, t)
+# m.l('tx_outputs', s['tx_outputs'], t)
 tx_body = TransactionBody(
     inputs=s["tx_inputs"], outputs=s["tx_outputs"], fee=s["minfee"]
 )
