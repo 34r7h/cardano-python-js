@@ -37,11 +37,7 @@ class Methods:
 
 m = Methods()
 try:
-    example = [
-        '{"payment":{"signing":{"type":"PaymentSigningKeyShelley_ed25519","description":"PaymentSigningKeyShelley_ed25519","cborHex":"582099391d63bc2625806b84102aaa01b0e440d4c2eb2899c47ef6b3d46ec05c002f"},"verification":{"type":"PaymentVerificationKeyShelley_ed25519","description":"PaymentVerificationKeyShelley_ed25519","cborHex":"5820b0f8b12bfcf37f8e6867c4888bebebedab16ffc6bf877d71694c8458977c72ea"}},"stake":{"signing":{"type":"StakeSigningKeyShelley_ed25519","description":"StakeSigningKeyShelley_ed25519","cborHex":"5820e5b36759e4ae59c5941d1d81b6ac84307ed199070b55adb3bda8288ce1b7b119"},"verification":{"type":"StakeVerificationKeyShelley_ed25519","description":"StakeVerificationKeyShelley_ed25519","cborHex":"5820de68fab7aa37377115229d663098f7148f110106711810f7b8519d320a9993cd"}}}',
-        '{"address":"addr1qx877x8vz3d76xxj9cyfqnrtkp0d97twp3r4szwtln05h0v79yjulpsd0fpfrs6zzg04pc5hn7w0kugx7t0wwq5hn5cqe3c3ew","outputs":[{"address":"addr1q89dlndels95mhcqjqxhk3qz4g4fhr82jntncrh2yj2jwaf89hyfl3dr9nhcj5xgvdga565qgaukf8hsg27fe9wm89astmfjc9","tokens":[{"unit":"lovelace","quantity":"10821086","index":"0"},{"unit":"16d657be5b781fd5c7d13d5358c8be7c15509739ae15d5b3b5e6f06a537562736964652050617276617469","quantity":"1","index":"1"},{"unit":"2d93c679676ff59f092b448c942212312267a67eae63f57b4905133177746620636f696e","quantity":"1","index":"2"},{"unit":"4cb85b57144cd8cfd7fc58e14af07ca0db0d31184e37035ad74eb6fe776879206e6f74","quantity":"1","index":"3"},{"unit":"581513d0cdb8a1cd3753a5fd4cf9c2931453253aeb5cf252667ee7244147415045706f6f6c62657461","quantity":"19670","index":"4"},{"unit":"92952ee27042c68cd5a807d686dd75010115dfe6feab2c898f0fde1458796d626f6c","quantity":"9","index":"5"},{"unit":"ae44f6f2bf702326b8b02b5d902458b99c47de929a7d7922eac4d6be58796d626f6c50726f746f7479706531","quantity":"2","index":"6"},{"unit":"cf0718f10faa46e686ec2fbfbde8ef99a7c75ae28026db09e06bb8616c6f76655f6561727468","quantity":"1","index":"7"},{"unit":"da2bd6118fffc30168a1bc19e288244bc25e49892269aca57753292554616e676f","quantity":"1000000","index":"8"},{"unit":"ec2d31189092312fc8aebdf0f2551bc4de9f1e570620be902f15433d61","quantity":"1","index":"9"},{"unit":"f6196e5384f1e40723d678fc42e6926f4bb35df08b36e57db17b0254776879206e6f74","quantity":"1","index":"10"}]}],"submit":"true"}',
-        "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
-    ]
+    example = []
     args = sys.argv[1:] or example
     if len(args) <= 2:
         m.e("Arguments have no data.")
