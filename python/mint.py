@@ -23,33 +23,16 @@ else:
     args = [
         "addr1qxvqw3xawj76533sf8dl4rkm9sn5t4vfzwgtc0mvmcjpmgee8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57assqu5h5",
         {
-            "artist": "Sharon",
-            "description": "x your eyes",
-            "ticker": "shrn1",
-            "collection": "Sharon Experiments",
+            "artist": "34r7h",
+            "description": "xmba prototype token",
+            "ticker": "XMBP",
             "creator": "XMBA",
             "discord": "https://discord.gg/446844338538938378",
             "rarity": "Tier 1 (1 of 1)",
             "set": "XMBLs (1 of 1)",
-            "twitter": "https://twitter/i34r7h",
-            "copyright": "Copyright 2022 Sharon",
-            "files": [
-                {
-                    "mediaType": "image/png",
-                    "name": "screen_shot_2022-06-28_at_21.49.43.png",
-                    "src": "ipfs://QmYD4xHe3noykXihefWEKPzv6NyTeMf6Mngdr7pPVenh8u",
-                }
-            ],
-            "xymboltoken": "c995c28304094b787bdefaa0803ead590286b3d6be23ff9c3c8adde8ff007ce3",
-            "imagehash": "81d0f728b9c482336654193cdd29cdb25d8c141ddca70ec606ac513b34a8b76b",
-            "ipfs": "QmYD4xHe3noykXihefWEKPzv6NyTeMf6Mngdr7pPVenh8u",
-            "filehash": "263b32bf6bd33e9c53787c12aefdbbbf3dd92345e48fe3367d68edfb40166bff",
-            "id": "c995c28304094b787bdefaa0803ead590286b3d6be23ff9c3c8adde8ff007ce3",
-            "image": "ipfs://QmYD4xHe3noykXihefWEKPzv6NyTeMf6Mngdr7pPVenh8u",
-            "mediaType": "image/png",
-            "name": "x your eyes",
+            "twitter": "https://twitter/xmba",
+            "name": "xmba proto",
             "supply": "1",
-            "size": "284212",
         },
         "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
     ]
