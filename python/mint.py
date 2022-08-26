@@ -24,14 +24,14 @@ else:
         "addr1qxvqw3xawj76533sf8dl4rkm9sn5t4vfzwgtc0mvmcjpmgee8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57assqu5h5",
         {
             "artist": "34r7h",
-            "description": "xmba prototype token",
+            "description": "Omikami prototype token",
             "ticker": "XMBP",
-            "creator": "XMBA",
+            "creator": "Omikami",
             "discord": "https://discord.gg/446844338538938378",
             "rarity": "Tier 1 (1 of 1)",
             "set": "XMBLs (1 of 1)",
-            "twitter": "https://twitter/xmba",
-            "name": "xmba proto",
+            "twitter": "https://twitter/Omikami",
+            "name": "Omikami proto",
             "supply": "1",
         },
         "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
@@ -142,7 +142,7 @@ nft1 = AssetName(bytes(tokenmetadata['name'], 'utf-8'))
 # nft2 = AssetName(b"MY_NFT_2")
 # Put assets into the asset container with a quantity of 1
 
-# TODO add quantity from xmba for currencies
+# TODO add quantity from Omikami for currencies
 my_asset[nft1] = 1
 # my_asset[nft2] = 1
 
