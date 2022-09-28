@@ -10,6 +10,25 @@ import json
 from datetime import datetime
 from pycardano import *
 
+t = True
+f = False
+dev = t
+def l(l, d, s):  # l: label (string), d: data (any), s: show (bool)
+        if not dev:
+            return
+        dtype = type(d)
+        try:
+            da = json.dumps(d, indent=2, sort_keys=t)
+        except:
+            da = d
+        if s:
+            print(f"\n\n\n{'─' * 25}\n{l}: {dtype}\n{'─' * 15}\n")
+            if type(da) == list or type(da) == set:
+                for xi, x in enumerate(da):
+                    print(f"{xi}:", x, "\n")
+            else:
+                print(da)
+
 now = datetime.now()
 if len(sys.argv) > 1:
     ### args = [address, data, blockfrostid]
@@ -24,14 +43,14 @@ else:
         "addr1qxvqw3xawj76533sf8dl4rkm9sn5t4vfzwgtc0mvmcjpmgee8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57assqu5h5",
         {
             "artist": "34r7h",
-            "description": "Omikami prototype token",
+            "description": "automorph prototype token",
             "ticker": "XMBP",
-            "creator": "Omikami",
+            "creator": "automorph",
             "discord": "https://discord.gg/446844338538938378",
             "rarity": "Tier 1 (1 of 1)",
             "set": "XMBLs (1 of 1)",
-            "twitter": "https://twitter/Omikami",
-            "name": "Omikami proto",
+            "twitter": "https://twitter/automorph",
+            "name": "automorph proto",
             "supply": "1",
         },
         "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
@@ -142,7 +161,7 @@ nft1 = AssetName(bytes(tokenmetadata['name'], 'utf-8'))
 # nft2 = AssetName(b"MY_NFT_2")
 # Put assets into the asset container with a quantity of 1
 
-# TODO add quantity from Omikami for currencies
+# TODO add quantity from automorph for currencies
 my_asset[nft1] = 1
 # my_asset[nft2] = 1
 
@@ -210,8 +229,11 @@ builder.native_scripts = native_scripts
 # Set transaction metadata
 builder.auxiliary_data = auxiliary_data
 
+# print(builder, chain_context)
+
 # Calculate the minimum amount of lovelace that need to hold the NFT we are going to mint
-min_val = min_lovelace(Value(0, my_nft), chain_context)
+min_val = 1500000 + min_lovelace(chain_context, amount=Value(0, my_nft))
+# 
 
 
 # Send the NFT to our own address
@@ -226,5 +248,6 @@ tx_id = str(signed_tx.id)
 
 # Submit signed transaction to the network
 # print("############### Submitting transaction ###############")
+
 chain_context.submit_tx(signed_tx.to_cbor())
-print(policy_id,tx_id )
+print(policy_id, tx_id)
