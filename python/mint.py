@@ -43,14 +43,14 @@ else:
         "addr1qxvqw3xawj76533sf8dl4rkm9sn5t4vfzwgtc0mvmcjpmgee8dlsen8n464ucw69acfgdxgguscgfl5we3rwts4s57assqu5h5",
         {
             "artist": "34r7h",
-            "description": "automorph prototype token",
+            "description": "XMBL prototype token",
             "ticker": "XMBP",
-            "creator": "automorph",
+            "creator": "XMBL",
             "discord": "https://discord.gg/446844338538938378",
             "rarity": "Tier 1 (1 of 1)",
             "set": "XMBLs (1 of 1)",
-            "twitter": "https://twitter/automorph",
-            "name": "automorph proto",
+            "twitter": "https://twitter/XMBL",
+            "name": "XMBL proto",
             "supply": "1",
         },
         "mainnetqEZ4wDDoRdtWqh2SNVLNqfQbhlNmTbza",
@@ -161,7 +161,7 @@ nft1 = AssetName(bytes(tokenmetadata['name'], 'utf-8'))
 # nft2 = AssetName(b"MY_NFT_2")
 # Put assets into the asset container with a quantity of 1
 
-# TODO add quantity from automorph for currencies
+# TODO add quantity from XMBL for currencies
 my_asset[nft1] = 1
 # my_asset[nft2] = 1
 
@@ -232,7 +232,7 @@ builder.auxiliary_data = auxiliary_data
 # print(builder, chain_context)
 
 # Calculate the minimum amount of lovelace that need to hold the NFT we are going to mint
-min_val = 1500000 + min_lovelace(chain_context, amount=Value(0, my_nft))
+min_val = min_lovelace(chain_context, output=TransactionOutput(address, Value(0, my_nft)))
 # 
 
 

@@ -86,7 +86,7 @@ try:
     # iterate through tx output requests
     # Iterate through available utxos, set inputs, set total_in
     for utxo in utxos_from_bf:
-        m.l("utxo", utxo, t)
+        m.l("utxo", utxo, f)
         tx_id = str(utxo.input.transaction_id)
         coin = utxo.output.amount.coin
         index = utxo.input.index
@@ -107,14 +107,14 @@ try:
                     s["total_in"][policy_id] = amount
                 else:
                     s["total_in"][policy_id] += amount
-    m.l("tokens", s["tokens"], t)
+    m.l("tokens", s["tokens"], f)
     for output in d["outputs"]:
         lovelace = 0
         multi = {}
         # Set required and prep tx output
         for token in output["tokens"]:
             token_policy = token["unit"][0:56]
-            m.l("output token", token, t)
+            m.l("output token", token, f)
 
             # set required
             if not token_policy in s["required"]:
@@ -166,7 +166,7 @@ try:
             )
         )
     for log in ["required", "total_in", "tx_inputs", "tx_outputs", "tokens"]:
-        m.l(log, s[log], t)
+        m.l(log, s[log], f)
 
     # Metadata
     if "metadata" in jsondata:
@@ -198,6 +198,9 @@ try:
     vk_witnesses = [VerificationKeyWitness(vk, signature)]
     signed_tx = Transaction(tx_body, TransactionWitnessSet(vkey_witnesses=vk_witnesses))
     tx_id = str(signed_tx.id)
+    m.l('tokens', s['tokens'], t)
+    m.l('inputs', s['tx_inputs'], t)
+    m.l('outputs', s['tx_outputs'], t)
     # Submit or return signed_tx
     if s["submit"] == "true":
         context.submit_tx(signed_tx.to_cbor())
